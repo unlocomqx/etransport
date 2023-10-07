@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:theme {
+
+  :colors {
+    neon-pink: #ABCDEF;
+    neon-lime: #ABCDEF;
+    neon-cyan: #ABCDEF;
+  }
+
+  :fonts {
+    sans: 'Inter', sans-serif;
+    display: 'Satoshi', sans-serif;
+  }
+
+}
