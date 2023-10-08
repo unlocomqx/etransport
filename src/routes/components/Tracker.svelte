@@ -32,7 +32,9 @@
   }
 
   function stopTracking() {
-    navigator.geolocation.clearWatch(tracking_id);
+    if (tracking_id) {
+      navigator.geolocation.clearWatch(tracking_id);
+    }
     state = "idle";
   }
 </script>
