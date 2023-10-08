@@ -53,7 +53,7 @@
         tracking_state = "idle";
       },
       {
-        enableHighAccuracy: true,
+        enableHighAccuracy: false,
         timeout: 10000,
         maximumAge: 0
       }
