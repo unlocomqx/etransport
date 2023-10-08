@@ -1,7 +1,7 @@
 // See https://kit.svelte.dev/docs/types#app
 // for information about these interfaces
 
-import type { SupabaseClient } from '@supabase/supabase-js';
+import type { SupabaseClient, User } from '@supabase/supabase-js';
 
 declare module '*.svelte' {
 	export { SvelteComponentDev as default } from 'svelte/internal';
@@ -12,6 +12,8 @@ declare global {
 		// interface Error {}
 		interface Locals {
 			supabase: SupabaseClient;
+			session: Session | null;
+			user: User | undefined;
 		}
 
 		interface PageData {

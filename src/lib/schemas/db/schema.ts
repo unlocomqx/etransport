@@ -1,19 +1,12 @@
-import { integer, pgTable, timestamp, varchar } from 'drizzle-orm/pg-core';
+import { boolean, pgTable, text, varchar } from 'drizzle-orm/pg-core';
 import { nanoid } from 'nanoid';
+import type { InferSelectModel } from 'drizzle-orm';
 
-export const Users = pgTable('configs', {
+export const users = pgTable('users', {
 	id: varchar('id').primaryKey().$defaultFn(nanoid),
-
-	name: varchar('name').notNull(),
-
-	background_image: varchar('background_image'),
-	background_width: integer('background_width'),
-	background_height: integer('background_height'),
-
-	overlay_image: varchar('overlay_image'),
-	overlay_width: integer('overlay_width'),
-	overlay_height: integer('overlay_height'),
-
-	createdAt: timestamp('date_created').notNull().defaultNow(),
-	updatedAt: timestamp('date_updated').notNull().defaultNow()
+	email: text('email').notNull(),
+	active: boolean('active').notNull().default(true),
+	role: text('role').notNull().default('admin')
 });
+
+export type User = InferSelectModel<typeof users>;
