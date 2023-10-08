@@ -68,7 +68,7 @@
 
 <div class="card bordered">
   <div class="card-body">
-    <div>
+    <div class="flex gap-2 flex-wrap">
       <button class="btn btn-primary relative overflow-hidden" disabled={location_state !== "idle"} on:click={start}>
         <Icon class="text-2xl" icon="ri:scan-2-fill" />
         <span>Find transport</span>
@@ -77,7 +77,7 @@
         {/if}
       </button>
       <button class="btn relative" disabled={tracking_state !== "idle"} on:click={track}>
-        <Icon class="text-2xl" icon="fe:bus" />
+        <Icon class="text-2xl" icon="basil:location-solid" />
         <span>Track my location</span>
       </button>
       {#if tracking_state !== "idle"}
