@@ -3,7 +3,7 @@
   import { toast } from "svelte-sonner";
   import { page } from "$app/stores";
   import type { Session } from "@supabase/supabase-js";
-  import { onDestroy } from "svelte";
+  import { onDestroy, onMount } from "svelte";
 
   let tracking_id: number;
   let state = "idle";
@@ -29,8 +29,26 @@
 
     state = "tracking";
     tracking_id = navigator.geolocation.watchPosition(
-      (position) => {
+      async (position) => {
         console.log(position, position.coords.latitude, position.coords.longitude);
+        const res = await fetch("/api/location", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            id_user: session.user.id,
+            latitude: position.coords.latitude.toString(),
+            longitude: position.coords.longitude.toString(),
+            timestamp: position.timestamp.toString()
+          })
+        });
+
+        const data = await res.json();
+        console.log(data);
+        if (data.error) {
+          toast.warning("The tracking data could not be saved.");
+        }
       },
       (err) => {
         console.error(err);
@@ -39,7 +57,7 @@
       },
       {
         enableHighAccuracy: false,
-        timeout: 10000,
+        // timeout: 10000,
         maximumAge: 0
       }
     );
@@ -56,6 +74,9 @@
     state = "idle";
   }
 
+  onMount(() => {
+    track();
+  });
   onDestroy(stopTracking);
 </script>
 
