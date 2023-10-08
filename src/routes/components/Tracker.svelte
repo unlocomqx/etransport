@@ -45,8 +45,7 @@
     );
   }
 
-  function stopTracking() {
-    console.log("stop");
+  export function stopTracking() {
     try {
       if (tracking_id) {
         navigator.geolocation.clearWatch(tracking_id);

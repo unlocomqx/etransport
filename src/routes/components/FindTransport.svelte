@@ -2,10 +2,14 @@
   import Icon from "@iconify/svelte";
   import Loading from "$lib/components/Loading.svelte";
   import { toast } from "svelte-sonner";
+  import type { TrackerComponent } from "./types";
+
+  export let tracker: TrackerComponent;
 
   let state = "idle";
 
   async function start() {
+    tracker.stopTracking();
     const perm = await navigator.permissions.query({ name: "geolocation" });
 
     if (perm.state === "denied") {
