@@ -3,7 +3,7 @@
   import Loading from "$lib/components/Loading.svelte";
   import { toast } from "svelte-sonner";
 
-  let state = "idle";
+  let location_state = "idle";
 
   async function start() {
     const perm = await navigator.permissions.query({ name: "geolocation" });
@@ -13,16 +13,16 @@
       return;
     }
 
-    state = "loading";
+    location_state = "loading";
     navigator.geolocation.getCurrentPosition(
       (position) => {
         console.log(position.coords.latitude, position.coords.longitude);
-        state = "idle";
+        location_state = "idle";
       },
       (err) => {
         toast.error("Failed to get your location.");
         console.error(err);
-        state = "idle";
+        location_state = "idle";
       },
       {
         timeout: 5000,
@@ -30,6 +30,9 @@
       }
     );
   }
+
+  let tracking_id: number;
+  let tracking_state = "idle";
 
   async function track() {
     const perm = await navigator.permissions.query({ name: "geolocation" });
@@ -39,43 +42,50 @@
       return;
     }
 
-    state = "loading";
-    navigator.geolocation.watchPosition(
+    tracking_state = "tracking";
+    tracking_id = navigator.geolocation.watchPosition(
       (position) => {
         console.log(position, position.coords.latitude, position.coords.longitude);
-        state = "idle";
       },
       (err) => {
         console.error(err);
-        toast.error("Failed to get your location.");
-        state = "idle";
+        toast.error("Location tracking failed.");
+        tracking_state = "idle";
       },
       {
         enableHighAccuracy: true,
-        timeout: 5000,
+        timeout: 10000,
         maximumAge: 0
       }
     );
+  }
+
+  function stopTracking() {
+    navigator.geolocation.clearWatch(tracking_id);
+    tracking_state = "idle";
   }
 </script>
 
 <div class="card bordered">
   <div class="card-body">
     <div>
-      <button class="btn btn-primary relative overflow-hidden" disabled="{state !== 'idle'}" on:click={start}>
+      <button class="btn btn-primary relative overflow-hidden" disabled={location_state !== "idle"} on:click={start}>
         <Icon class="text-2xl" icon="ri:scan-2-fill" />
         <span>Find transport</span>
-        {#if state === "loading"}
+        {#if location_state === "loading"}
           <Loading />
         {/if}
       </button>
-      <button class="btn" on:click={track}>
+      <button class="btn relative" disabled={tracking_state !== "idle"} on:click={track}>
         <Icon class="text-2xl" icon="fe:bus" />
         <span>Track my location</span>
-        {#if state === "loading"}
-          <Loading />
-        {/if}
       </button>
+      {#if tracking_state !== "idle"}
+        <button class="btn btn-error" on:click={stopTracking}>
+          <Icon icon="mdi:stop" class="text-2xl" />
+          <span>Stop</span>
+        </button>
+      {/if}
     </div>
   </div>
 </div>
