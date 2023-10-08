@@ -1,12 +1,11 @@
-import { boolean, pgTable, text, varchar } from 'drizzle-orm/pg-core';
+import { pgTable, timestamp, varchar } from 'drizzle-orm/pg-core';
 import { nanoid } from 'nanoid';
-import type { InferSelectModel } from 'drizzle-orm';
+import { sql } from 'drizzle-orm';
 
-export const users = pgTable('users', {
+export const locations = pgTable('locations', {
 	id: varchar('id').primaryKey().$defaultFn(nanoid),
-	email: text('email').notNull(),
-	active: boolean('active').notNull().default(true),
-	role: text('role').notNull().default('admin')
+	id_user: varchar('id_user').notNull(),
+	latitude: varchar('latitude').notNull(),
+	longitude: varchar('longitude').notNull(),
+	timestamp: timestamp('timestamp4').default(sql`now()`)
 });
-
-export type User = InferSelectModel<typeof users>;
