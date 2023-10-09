@@ -35,7 +35,7 @@
         console.log(position, position.coords.latitude, position.coords.longitude);
         if (position.timestamp - last_timestamp < 10000) {
           console.log("Skipping location update, too soon.");
-          return;
+          // return;
         }
         last_timestamp = position.timestamp;
         const res = await fetch("/api/location", {
@@ -62,7 +62,7 @@
         state = "idle";
       },
       {
-        enableHighAccuracy: false,
+        // enableHighAccuracy: false,
         // timeout: 10000,
         maximumAge: 0
       }

@@ -5,6 +5,7 @@ import { createInsertSchema } from 'drizzle-zod';
 import { locations } from '$lib/schemas/db/schema';
 import { db } from '$lib/db/client';
 import { desc, eq } from 'drizzle-orm';
+import { getDistance } from 'geolib';
 
 export const POST: RequestHandler = async ({ request }) => {
 	const data = (await request.json()) as typeof locations.$inferSelect;
@@ -35,8 +36,18 @@ export const POST: RequestHandler = async ({ request }) => {
 
 		let can_add = true;
 
-		if (lastLocation && Date.now() - lastLocation.timestamp.getTime() < 10000) {
-			can_add = false;
+		if (lastLocation) {
+			if (Date.now() - lastLocation.timestamp.getTime() < 10000) {
+				can_add = false;
+			}
+			const distance = getDistance(
+				{ latitude: lastLocation.latitude, longitude: lastLocation.longitude },
+				{ latitude: form.data.latitude, longitude: form.data.longitude }
+			);
+			console.log(distance);
+			if (distance < 100) {
+				can_add = false;
+			}
 		}
 
 		if (can_add) {
