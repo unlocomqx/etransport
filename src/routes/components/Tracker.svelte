@@ -38,9 +38,9 @@
           },
           body: JSON.stringify({
             id_user: session.user.id,
-            latitude: position.coords.latitude.toString(),
-            longitude: position.coords.longitude.toString(),
-            timestamp: position.timestamp.toString()
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+            timestamp: new Date(position.timestamp).toISOString()
           })
         });
 

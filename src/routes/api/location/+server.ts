@@ -8,7 +8,18 @@ import { db } from '$lib/db/client';
 export const POST: RequestHandler = async ({ request }) => {
 	const data = await request.json();
 
-	const form = await superValidate(data, createInsertSchema(locations));
+	console.log({ data });
+
+	const schema = createInsertSchema(locations);
+	const form = await superValidate(
+		{
+			...data,
+			timestamp: new Date(data.timestamp)
+		},
+		schema
+	);
+
+	console.log(form);
 
 	if (!form.valid) {
 		return json({

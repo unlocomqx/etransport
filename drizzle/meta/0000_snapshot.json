@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "pg",
-  "id": "ba682c8d-a883-4ebf-8ca5-4d4bac1af221",
+  "id": "ad71829d-81f0-48bd-8c0d-509e2261d19e",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "locations": {
@@ -22,19 +22,19 @@
         },
         "latitude": {
           "name": "latitude",
-          "type": "varchar",
+          "type": "real",
           "primaryKey": false,
           "notNull": true
         },
         "longitude": {
           "name": "longitude",
-          "type": "varchar",
+          "type": "real",
           "primaryKey": false,
           "notNull": true
         },
         "timestamp": {
           "name": "timestamp",
-          "type": "varchar",
+          "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": true
         }
