@@ -4,6 +4,7 @@
   import { page } from "$app/stores";
   import type { Session } from "@supabase/supabase-js";
   import { onDestroy, onMount } from "svelte";
+  import { mode } from "$lib/stores/mode";
 
   let tracking_id: number;
   let last_timestamp: number;
@@ -44,16 +45,17 @@
             "Content-Type": "application/json"
           },
           body: JSON.stringify({
-            id_user: session.user.id,
             latitude: position.coords.latitude,
             longitude: position.coords.longitude,
-            timestamp: new Date(position.timestamp).toISOString()
+            timestamp: new Date(position.timestamp).toISOString(),
+            mode: $mode
           })
         });
 
         const data = await res.json();
         if (data.error) {
-          toast.warning("The tracking data could not be saved.");
+          console.log(data.errors);
+          toast.warning(data.message || "The tracking data could not be saved.");
         }
       },
       (err) => {
@@ -76,23 +78,68 @@
       }
     } catch (e) {
       console.log(e);
+    } finally {
+      state = "idle";
     }
-    state = "idle";
   }
 
   onMount(() => {
     track();
   });
   onDestroy(stopTracking);
+
+  async function updateMode(newMode: string) {
+    mode.set(newMode);
+
+    const session: Session = $page.data.session;
+    if (!session || !session.user) {
+      toast.info("Please login using Google to change your mode of transport.");
+      return;
+    }
+
+    const res = await fetch("/api/mode", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        mode: $mode
+      })
+    });
+
+    const data = await res.json();
+    if (data.error) {
+      console.log(data.errors);
+      toast.warning(data.message || "The mode could not be saved.");
+    }
+  }
 </script>
 
-<button class="btn relative" class:btn-success={state === "tracking"} on:click={track}>
-  <Icon class="text-2xl" icon="basil:location-solid" />
-  <span>Track my location</span>
-</button>
-{#if state !== "idle"}
-  <button class="btn btn-error" on:click={stopTracking}>
-    <Icon icon="mdi:stop" class="text-2xl" />
-    <span>Stop</span>
+<div>
+  <button class="btn relative" class:btn-success={state === "tracking"} on:click={track}>
+    <Icon class="text-2xl" icon="basil:location-solid" />
+    <span>Track my location</span>
   </button>
+  {#if state !== "idle"}
+    <button class="btn btn-error" on:click={stopTracking}>
+      <Icon icon="mdi:stop" class="text-2xl" />
+      <span>Stop</span>
+    </button>
+  {/if}
+</div>
+{#if state !== "idle"}
+  <div>
+    <div class="join">
+      <button class="btn btn-lg join-item" class:btn-success={$mode === "bus"}
+              on:click={() => updateMode("bus")}>
+        <Icon class="text-2xl" icon="noto:oncoming-bus" />
+        <span>Bus</span>
+      </button>
+      <button class="btn btn-lg join-item" class:btn-success={$mode === "train"}
+              on:click={() => updateMode("train")}>
+        <Icon class="text-2xl" icon="noto:train" />
+        <span>Train</span>
+      </button>
+    </div>
+  </div>
 {/if}

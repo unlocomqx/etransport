@@ -5,7 +5,6 @@ import { createInsertSchema } from 'drizzle-zod';
 import { locations } from '$lib/schemas/db/schema';
 import { db } from '$lib/db/client';
 import { desc, eq } from 'drizzle-orm';
-import { getDistance } from 'geolib';
 
 export const POST: RequestHandler = async ({ request, locals: { session } }) => {
 	if (!session) {
@@ -17,11 +16,11 @@ export const POST: RequestHandler = async ({ request, locals: { session } }) => 
 	data.id_user = session.user.id;
 
 	const form = await superValidate(
-		{
-			...data,
-			timestamp: new Date(data.timestamp)
-		},
-		createInsertSchema(locations)
+		data,
+		createInsertSchema(locations).pick({
+			id_user: true,
+			mode: true
+		})
 	);
 
 	if (!form.valid) {
@@ -41,43 +40,14 @@ export const POST: RequestHandler = async ({ request, locals: { session } }) => 
 			.limit(1)
 			.then((r) => r[0]);
 
-		let can_add = true;
-
 		if (lastLocation) {
-			if (Date.now() - lastLocation.timestamp.getTime() < 10000) {
-				can_add = false;
-			}
-			const distance = getDistance(
-				{ latitude: lastLocation.latitude, longitude: lastLocation.longitude },
-				{ latitude: form.data.latitude, longitude: form.data.longitude }
-			);
-			if (distance < 100) {
-				await db
-					.update(locations)
-					.set({
-						timestamp: form.data.timestamp,
-						mode: form.data.mode
-					})
-					.where(eq(locations.id, lastLocation.id))
-					.execute();
-				can_add = false;
-			}
-		}
-
-		if (can_add) {
-			const inserted = await db
-				.insert(locations)
-				.values({
-					id_user: form.data.id_user,
-					latitude: form.data.latitude,
-					longitude: form.data.longitude,
-					timestamp: form.data.timestamp,
+			await db
+				.update(locations)
+				.set({
 					mode: form.data.mode
 				})
-				.returning();
-			if (!inserted) {
-				return json({ error: true, message: 'Could not save location' });
-			}
+				.where(eq(locations.id, lastLocation.id))
+				.execute();
 		}
 	} catch (e) {
 		console.log(e);
