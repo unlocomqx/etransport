@@ -6,6 +6,7 @@
   import { onDestroy, onMount } from "svelte";
 
   let tracking_id: number;
+  let last_timestamp: number;
   let state = "idle";
 
   async function track() {
@@ -28,9 +29,15 @@
     }
 
     state = "tracking";
+    last_timestamp = 0;
     tracking_id = navigator.geolocation.watchPosition(
       async (position) => {
         console.log(position, position.coords.latitude, position.coords.longitude);
+        if (position.timestamp - last_timestamp < 10000) {
+          console.log("Skipping location update, too soon.");
+          return;
+        }
+        last_timestamp = position.timestamp;
         const res = await fetch("/api/location", {
           method: "POST",
           headers: {
@@ -45,7 +52,6 @@
         });
 
         const data = await res.json();
-        console.log(data);
         if (data.error) {
           toast.warning("The tracking data could not be saved.");
         }
