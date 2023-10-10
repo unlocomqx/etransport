@@ -56,10 +56,9 @@ export function getGeoCenters(locations: [string, number, number][]) {
 			.filter(([_, coords]) => coords.length > 1)
 			.map(([_, coords]) => coords.map((latlng) => latlng.join(',')))
 	});
-	const centers = Array.from(grouped.entries()).map(([id, coords]) => [
+	return Array.from(grouped.entries()).map(([id, coords]) => [
 		id,
 		getGeoCenter(coords),
 		coords.length
 	]);
-	return centers;
 }
