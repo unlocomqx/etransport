@@ -32,6 +32,9 @@ dependencies:
   postgres:
     specifier: ^3.3.5
     version: 3.3.5
+  svelte-persisted-store:
+    specifier: ^0.7.0
+    version: 0.7.0(svelte@4.2.1)
   svelte-sonner:
     specifier: ^0.3.0
     version: 0.3.0(svelte@4.2.1)
@@ -3906,6 +3909,15 @@ packages:
       svelte: ^3.19.0 || ^4.0.0
     dependencies:
       svelte: 4.2.1
+
+  /svelte-persisted-store@0.7.0(svelte@4.2.1):
+    resolution: {integrity: sha512-PczYS60ysScQ0DmTCPXQm5rwt8FfQzSlx0lCbljbE6hTCKqXaw2bP8KH1+B7QTPmuiy/QbAk4pjYpNCmZhjyRw==}
+    engines: {node: '>=0.14'}
+    peerDependencies:
+      svelte: ^3.48.0 || >4.0.0
+    dependencies:
+      svelte: 4.2.1
+    dev: false
 
   /svelte-preprocess@5.0.4(postcss@8.4.31)(svelte@4.2.1)(typescript@5.2.2):
     resolution: {integrity: sha512-ABia2QegosxOGsVlsSBJvoWeXy1wUKSfF7SWJdTjLAbx/Y3SrVevvvbFNQqrSJw89+lNSsM58SipmZJ5SRi5iw==}

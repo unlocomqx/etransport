@@ -66,6 +66,7 @@
     "geolib": "^3.3.4",
     "nanoid": "^5.0.1",
     "postgres": "^3.3.5",
+    "svelte-persisted-store": "^0.7.0",
     "svelte-sonner": "^0.3.0"
   }
 }

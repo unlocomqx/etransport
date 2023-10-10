@@ -36,7 +36,7 @@
         console.log(position, position.coords.latitude, position.coords.longitude);
         if (position.timestamp - last_timestamp < 10000) {
           console.log("Skipping location update, too soon.");
-          // return;
+          return;
         }
         last_timestamp = position.timestamp;
         const res = await fetch("/api/location", {
@@ -48,7 +48,7 @@
             latitude: position.coords.latitude,
             longitude: position.coords.longitude,
             timestamp: new Date(position.timestamp).toISOString(),
-            mode: $mode
+            mode: $mode.value
           })
         });
 
@@ -88,8 +88,8 @@
   });
   onDestroy(stopTracking);
 
-  async function updateMode(newMode: string) {
-    mode.set(newMode);
+  async function updateMode(value: string) {
+    mode.set({ value });
 
     const session: Session = $page.data.session;
     if (!session || !session.user) {
@@ -103,7 +103,7 @@
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        mode: $mode
+        mode: $mode.value
       })
     });
 
@@ -111,6 +111,10 @@
     if (data.error) {
       console.log(data.errors);
       toast.warning(data.message || "The mode could not be saved.");
+    }
+
+    if (data.success) {
+      toast.success("Mode updated successfully.");
     }
   }
 </script>
@@ -130,12 +134,12 @@
 {#if state !== "idle"}
   <div>
     <div class="join">
-      <button class="btn btn-lg join-item" class:btn-success={$mode === "bus"}
+      <button class="btn btn-lg join-item" class:btn-success={$mode.value === "bus"}
               on:click={() => updateMode("bus")}>
         <Icon class="text-2xl" icon="noto:oncoming-bus" />
         <span>Bus</span>
       </button>
-      <button class="btn btn-lg join-item" class:btn-success={$mode === "train"}
+      <button class="btn btn-lg join-item" class:btn-success={$mode.value === "train"}
               on:click={() => updateMode("train")}>
         <Icon class="text-2xl" icon="noto:train" />
         <span>Train</span>

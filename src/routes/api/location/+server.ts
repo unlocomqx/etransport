@@ -4,7 +4,7 @@ import { superValidate } from 'sveltekit-superforms/server';
 import { createInsertSchema } from 'drizzle-zod';
 import { locations } from '$lib/schemas/db/schema';
 import { db } from '$lib/db/client';
-import { desc, eq } from 'drizzle-orm';
+import { and, desc, eq, notBetween, sql } from 'drizzle-orm';
 import { getDistance } from 'geolib';
 
 export const POST: RequestHandler = async ({ request, locals: { session } }) => {
@@ -78,6 +78,17 @@ export const POST: RequestHandler = async ({ request, locals: { session } }) => 
 			if (!inserted) {
 				return json({ error: true, message: 'Could not save location' });
 			}
+
+			// delete old locations
+			await db
+				.delete(locations)
+				.where(
+					and(
+						eq(locations.id_user, form.data.id_user),
+						notBetween(locations.timestamp, sql`NOW() - INTERVAL '2 HOURS'`, sql`NOW()`)
+					)
+				)
+				.execute();
 		}
 	} catch (e) {
 		console.log(e);
