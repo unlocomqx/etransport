@@ -47,7 +47,7 @@
           body: JSON.stringify({
             latitude: position.coords.latitude,
             longitude: position.coords.longitude,
-            timestamp: new Date(position.timestamp).toISOString(),
+            timestamp: new Date(position.timestamp).toUTCString(),
             mode: $mode.value
           })
         });

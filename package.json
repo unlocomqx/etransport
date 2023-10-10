@@ -19,6 +19,7 @@
     "cy-test": "TEST=true env-cmd -f .env.test start-server-and-test start-dev http://127.0.0.1:5173 cy-run"
   },
   "devDependencies": {
+    "@faker-js/faker": "^8.1.0",
     "@sveltejs/adapter-auto": "^2.1.0",
     "@sveltejs/kit": "^1.25.1",
     "@types/child-process-promise": "^2.2.3",
