@@ -13,7 +13,9 @@ export function getCenterIcon(coords: Coordinate) {
 			scale: 3
 		})
 	});
-	const iconFeature = new Feature(new Point(fromLonLat(coords)));
+	const iconFeature = new Feature({
+		geometry: new Point(fromLonLat(coords))
+	});
 	iconFeature.setStyle(iconStyle);
 
 	const vectorSource = new Vector({
