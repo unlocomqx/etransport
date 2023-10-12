@@ -3,10 +3,12 @@
   import Loading from "$lib/components/Loading.svelte";
   import { toast } from "svelte-sonner";
   import type { TrackerComponent } from "./types";
+  import { goto } from "$app/navigation";
 
   export let tracker: TrackerComponent;
 
   let state = "idle";
+  let coords: GeolocationCoordinates | null = null;
 
   async function start() {
     tracker.stopTracking();
@@ -20,8 +22,10 @@
     state = "loading";
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        console.log(position.coords.latitude, position.coords.longitude);
+        console.log(position, position.coords.latitude, position.coords.longitude);
+        coords = position.coords;
         state = "idle";
+        goto(`/map?latitude=${coords.latitude}&longitude=${coords.longitude}`);
       },
       (err) => {
         toast.error("Failed to get your location.");
@@ -43,3 +47,8 @@
     <Loading />
   {/if}
 </button>
+
+<form action="/map" method="post">
+  <input name="latitude" type="hidden" value="{coords?.latitude}" />
+  <input name="longitude" type="hidden" value="{coords?.longitude}" />
+</form>

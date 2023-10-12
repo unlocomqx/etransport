@@ -69,8 +69,8 @@
 </div>
 
 <div class="p-4">
-  <Flash {flash} />
   <Toaster position="bottom-right" richColors />
+  <Flash {flash} />
   <slot />
 </div>
 

@@ -11,3 +11,5 @@ export const locations = pgTable('locations', {
 	timestamp: timestamp('timestamp', { withTimezone: true }).notNull(),
 	mode: modeEnum('mode').notNull()
 });
+
+export type LocationRow = typeof locations.$inferSelect;

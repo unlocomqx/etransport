@@ -30,6 +30,7 @@
     "autoprefixer": "^10.4.16",
     "child-process-promise": "^2.2.1",
     "cypress": "^13.3.0",
+    "cypress-browser-permissions": "^1.1.0",
     "cypress-file-upload": "^5.0.8",
     "cypress-vite": "^1.4.2",
     "cypress-watch-and-reload": "^1.10.9",

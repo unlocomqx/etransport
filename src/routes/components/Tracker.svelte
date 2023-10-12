@@ -3,7 +3,7 @@
   import { toast } from "svelte-sonner";
   import { page } from "$app/stores";
   import type { Session } from "@supabase/supabase-js";
-  import { onDestroy, onMount } from "svelte";
+  import { onDestroy } from "svelte";
   import { mode } from "$lib/stores/mode";
 
   let tracking_id: number;
@@ -83,9 +83,6 @@
     }
   }
 
-  onMount(() => {
-    track();
-  });
   onDestroy(stopTracking);
 
   async function updateMode(value: string) {

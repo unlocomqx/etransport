@@ -14,7 +14,7 @@ export async function seed(spec: string) {
 		await seed('reset');
 	}
 
-	const command = `psql -U postgres -f ${file.pathname} -d imagecomposer_test`;
+	const command = `psql -U postgres -f ${file.pathname} -d etransport_test`;
 	return exec(command);
 }
 
@@ -23,7 +23,7 @@ async function exportData(pathname: string) {
 	if (!fs.existsSync(dir)) {
 		fs.mkdirSync(dir, { recursive: true });
 	}
-	const command = `pg_dump --dbname=imagecomposer_test --schema=public --data-only --file=${pathname} --column-inserts --username=postgres --host=localhost --port=5432`;
+	const command = `pg_dump --dbname=etransport_test --schema=public --data-only --file=${pathname} --column-inserts --username=postgres --host=localhost --port=5432`;
 	console.log(command);
 	return exec(command);
 }
