@@ -1,4 +1,9 @@
 describe("Map", () => {
+  beforeEach(() => {
+    cy
+      .viewport(786, 1024);
+  });
+
   it("validate location", () => {
     cy
       .load("/map")

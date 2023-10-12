@@ -10,10 +10,17 @@ export const actions = {
 
 export const load = (async (event) => {
 	const { url } = event;
-	const latitude = url.searchParams.get('latitude');
-	const longitude = url.searchParams.get('longitude');
+	const latitude_str = url.searchParams.get('latitude');
+	const longitude_str = url.searchParams.get('longitude');
 
-	if (!latitude || !longitude) {
+	if (!latitude_str || !longitude_str) {
+		throw redirect('/', { type: 'error', message: 'Invalid location' }, event);
+	}
+
+	const latitude = parseFloat(latitude_str);
+	const longitude = parseFloat(longitude_str);
+
+	if (isNaN(latitude) || isNaN(longitude)) {
 		throw redirect('/', { type: 'error', message: 'Invalid location' }, event);
 	}
 
