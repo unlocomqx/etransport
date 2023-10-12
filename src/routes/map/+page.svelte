@@ -7,8 +7,8 @@
   import XYZ from "ol/source/XYZ";
   import Point from "ol/geom/Point.js";
   import { fromLonLat } from "ol/proj";
-
   import "ol/ol.css";
+  import { getCenterIcon } from "./utils/map";
 
   export let data: PageData;
 
@@ -17,8 +17,7 @@
   let map: Map | null = null;
   onMount(() => {
     console.log([ latitude, longitude ]);
-    var point = new Point(fromLonLat([ longitude, latitude ]));
-    console.log(point);
+    const point = new Point(fromLonLat([ longitude, latitude ]));
     map = new Map({
       target: "map",
       layers: [
@@ -26,7 +25,8 @@
           source: new XYZ({
             url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png"
           })
-        })
+        }),
+        getCenterIcon([ longitude, latitude ])
       ],
       view: new View({
         center: point.getCoordinates(),
