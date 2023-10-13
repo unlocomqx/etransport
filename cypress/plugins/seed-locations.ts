@@ -5,7 +5,7 @@ import { exec } from 'child-process-promise';
 
 export async function seedLocations() {
 	await seed('reset');
-	const origin: [number, number] = [33.8869, 9.5375];
+	const origin: [number, number] = [35.765249, 10.809677];
 	const rows: LocationRow[] = [...Array(100)].map((_) => {
 		const location = faker.location.nearbyGPSCoordinate({
 			origin,

@@ -1,20 +1,44 @@
 import { getDistance } from 'geolib';
+import type { LocationRow } from '$lib/schemas/db/schema';
+import type { Coords } from '$lib/types';
 
-export function getGeoCenter(data: [number, number][]) {
-	const coordLength = data.length;
+export type GeoGroup = Partial<LocationRow> & {
+	id_users: string[];
+	count: number;
+};
+
+export function getGeoGroup(locations: Partial<LocationRow>[]): GeoGroup {
+	const coordLength = locations.length;
 
 	let x = 0;
 	let y = 0;
 	let z = 0;
+	const modes: string[] = [];
 
-	for (const [latitude, longitude] of data) {
+	for (const { latitude, longitude, mode } of locations) {
+		if (!latitude || !longitude || !mode) continue;
+
 		const lat = (latitude * Math.PI) / 180;
 		const lon = (longitude * Math.PI) / 180;
 
 		x += Math.cos(lat) * Math.cos(lon);
 		y += Math.cos(lat) * Math.sin(lon);
 		z += Math.sin(lat);
+		modes.push(mode);
 	}
+
+	const modesCount = modes.reduce(
+		(acc, cur) => {
+			if (!acc[cur]) acc[cur] = 0;
+			acc[cur]++;
+			return acc;
+		},
+		{} as Record<string, number>
+	);
+
+	const mostUsedMode = Object.entries(modesCount).sort(
+		(a, b) => b[1] - a[1]
+	)[0][0] as LocationRow['mode'];
 
 	x /= coordLength;
 	y /= coordLength;
@@ -24,41 +48,84 @@ export function getGeoCenter(data: [number, number][]) {
 	const hyp = Math.sqrt(x * x + y * y);
 	const latResult = Math.atan2(z, hyp);
 
-	return [(latResult * 180) / Math.PI, (lonResult * 180) / Math.PI];
+	const lat = (latResult * 180) / Math.PI;
+	const lng = (lonResult * 180) / Math.PI;
+	return {
+		id_users: [], //locations.map((loc) => loc.id_user).map((id) => id!),
+		latitude: lat,
+		longitude: lng,
+		mode: mostUsedMode,
+		count: coordLength
+	};
 }
 
-export function getGeoCenters(locations: [string, number, number][]) {
-	const distances = locations.map(
-		([id, lat, lng]) =>
-			[id, [lat, lng], getDistance([0, 0], [lat, lng])] as [string, [number, number], number]
-	);
-	const sorted = distances.sort((a, b) => a[2] - b[2]);
-	const grouped = new Map<string, [number, number][]>();
+export function getGeoGroups(
+	locations: LocationRow[],
+	origin: Coords,
+	limit: number | undefined = undefined
+): GeoGroup[] {
+	const distances = locations.map(({ id_user, latitude, longitude, mode }) => ({
+		id_user,
+		latitude,
+		longitude,
+		distance: getDistance([origin.latitude, origin.longitude], [latitude, longitude]),
+		mode
+	}));
+	const sorted: Partial<LocationRow>[] = distances.sort((a, b) => a.distance - b.distance);
+	const grouped = new Map<number, Partial<LocationRow>[]>();
 	let lastIndex = 0;
 	for (let index = 0; index < sorted.length; index++) {
-		const [id, coords] = sorted[index];
+		const { id_user, latitude, longitude, mode } = sorted[index] as Partial<LocationRow>;
+		if (!id_user || !latitude || !longitude || !mode) continue;
+
 		if (index === lastIndex) {
-			grouped.set(id, [coords]);
-			// continue;
+			grouped.set(index, [
+				{
+					id_user,
+					latitude,
+					longitude,
+					mode
+				}
+			]);
 		} else {
-			const [lastId, lastCoords] = sorted[lastIndex];
-			if (getDistance(lastCoords, coords) < 1000) {
-				grouped.set(lastId, [...grouped.get(lastId)!, coords]);
-				// continue;
+			const {
+				id_user: lastId,
+				latitude: lastLatitude,
+				longitude: lastLongitude,
+				mode
+			} = sorted[lastIndex] as Partial<LocationRow>;
+			if (!lastId || !lastLatitude || !lastLongitude || !mode) continue;
+
+			if (getDistance([lastLatitude, lastLongitude], [latitude, longitude]) < 1000) {
+				grouped.set(lastIndex!, [
+					...grouped.get(lastIndex)!,
+					{
+						id_user,
+						latitude,
+						longitude,
+						mode
+					}
+				]);
 			} else {
-				grouped.set(id, [coords]);
+				grouped.set(index, [
+					{
+						id_user,
+						latitude,
+						longitude,
+						mode
+					}
+				]);
 				lastIndex = index;
 			}
 		}
 	}
-	console.log({
-		grouped: Array.from(grouped.entries())
-			.filter(([_, coords]) => coords.length > 1)
-			.map(([_, coords]) => coords.map((latlng) => latlng.join(',')))
-	});
-	return Array.from(grouped.entries()).map(([id, coords]) => [
-		id,
-		getGeoCenter(coords),
-		coords.length
-	]);
+
+	let groupsLimit = grouped.size;
+	if (limit) {
+		groupsLimit = Math.min(limit, groupsLimit);
+	}
+
+	return Array.from(grouped.entries())
+		.splice(0, groupsLimit)
+		.map(([, locs]) => getGeoGroup(locs));
 }

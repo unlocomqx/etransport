@@ -1,6 +1,6 @@
 import { describe, it } from 'vitest';
 import { faker } from '@faker-js/faker';
-import { getGeoCenters } from '$lib/utils/geo';
+import { getGeoGroups } from '$lib/utils/geo';
 
 describe('Locations', () => {
 	it('groups locations', () => {
@@ -17,7 +17,7 @@ describe('Locations', () => {
 				] as [string, number, number]
 		);
 
-		const centers = getGeoCenters(locations);
+		const centers = getGeoGroups(locations);
 		console.log(centers.filter(([, , count]) => count !== 1));
 	});
 });

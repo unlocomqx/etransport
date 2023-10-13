@@ -6,12 +6,12 @@
   import { fromLonLat } from "ol/proj";
   import { Vector } from "ol/source";
   import { Vector as VectorLayer } from "ol/layer";
-  import type { Coordinate } from "ol/coordinate";
   import type Map from "ol/Map";
+  import type { Coords } from "$lib/types";
 
-  export let coords: Coordinate;
+  export let coords: Coords;
 
-  const [ latitude, longitude ] = coords;
+  const { latitude, longitude } = coords;
 
   const mapContext = getContext("map") as {
     instance: Map;
@@ -43,5 +43,9 @@
     });
 
     map.addLayer(vectorLayer);
+
+    return () => {
+      map.removeLayer(vectorLayer);
+    };
   });
 </script>

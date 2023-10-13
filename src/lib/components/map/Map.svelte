@@ -6,10 +6,11 @@
   import XYZ from "ol/source/XYZ";
   import View from "ol/View";
   import { setContext } from "svelte";
+  import type { Coords } from "$lib/types";
 
-  export let center = [ 0, 0 ];
+  export let center: Coords = { latitude: 0, longitude: 0 };
 
-  const [ latitude, longitude ] = center;
+  const { latitude, longitude } = center;
 
   let map: Map | null = null;
 
