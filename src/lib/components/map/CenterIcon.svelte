@@ -22,8 +22,11 @@
 
     const iconStyle = new Style({
       image: new Icon({
+        anchor: [ 0.5, .85 ],
+        anchorXUnits: "fraction",
+        anchorYUnits: "fraction",
         src: "/map/location-indicator-red.svg",
-        scale: 3
+        scale: 4
       })
     });
     const iconFeature = new Feature({
