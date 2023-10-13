@@ -32,6 +32,7 @@ export const load = (async (event) => {
 	try {
 		const recent_locations = await db
 			.selectDistinct({
+				id: locations.id,
 				id_user: locations.id_user,
 				latitude: locations.latitude,
 				longitude: locations.longitude,
@@ -42,7 +43,7 @@ export const load = (async (event) => {
 			.where(between(locations.timestamp, new Date(Date.now() - 1000 * 3600), new Date()))
 			.orderBy(desc(locations.timestamp))
 			.execute();
-		groups = getGeoGroups(recent_locations as LocationRow[], { latitude, longitude }, 10);
+		groups = getGeoGroups(recent_locations as LocationRow[], { latitude, longitude });
 	} catch (e) {
 		console.error(e);
 		throw redirect('/', { type: 'error', message: 'Could not fetch location data' }, event);

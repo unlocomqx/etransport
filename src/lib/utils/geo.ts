@@ -7,7 +7,7 @@ export type GeoGroup = Partial<LocationRow> & {
 	count: number;
 };
 
-export function getGeoGroup(locations: Partial<LocationRow>[]): GeoGroup {
+export function getGeoGroup(id: string, locations: Partial<LocationRow>[]): GeoGroup {
 	const coordLength = locations.length;
 
 	let x = 0;
@@ -51,7 +51,8 @@ export function getGeoGroup(locations: Partial<LocationRow>[]): GeoGroup {
 	const lat = (latResult * 180) / Math.PI;
 	const lng = (lonResult * 180) / Math.PI;
 	return {
-		id_users: [], //locations.map((loc) => loc.id_user).map((id) => id!),
+		id,
+		id_users: locations.map((loc) => loc.id_user).map((id) => id!),
 		latitude: lat,
 		longitude: lng,
 		mode: mostUsedMode,
@@ -64,7 +65,8 @@ export function getGeoGroups(
 	origin: Coords,
 	limit: number | undefined = undefined
 ): GeoGroup[] {
-	const distances = locations.map(({ id_user, latitude, longitude, mode }) => ({
+	const distances = locations.map(({ id, id_user, latitude, longitude, mode }) => ({
+		id,
 		id_user,
 		latitude,
 		longitude,
@@ -72,14 +74,14 @@ export function getGeoGroups(
 		mode
 	}));
 	const sorted: Partial<LocationRow>[] = distances.sort((a, b) => a.distance - b.distance);
-	const grouped = new Map<number, Partial<LocationRow>[]>();
+	const grouped = new Map<string, Partial<LocationRow>[]>();
 	let lastIndex = 0;
 	for (let index = 0; index < sorted.length; index++) {
-		const { id_user, latitude, longitude, mode } = sorted[index] as Partial<LocationRow>;
-		if (!id_user || !latitude || !longitude || !mode) continue;
+		const { id, id_user, latitude, longitude, mode } = sorted[index] as Partial<LocationRow>;
+		if (!id || !id_user || !latitude || !longitude || !mode) continue;
 
 		if (index === lastIndex) {
-			grouped.set(index, [
+			grouped.set(id, [
 				{
 					id_user,
 					latitude,
@@ -89,16 +91,16 @@ export function getGeoGroups(
 			]);
 		} else {
 			const {
-				id_user: lastId,
+				id: lastId,
 				latitude: lastLatitude,
 				longitude: lastLongitude,
 				mode
 			} = sorted[lastIndex] as Partial<LocationRow>;
 			if (!lastId || !lastLatitude || !lastLongitude || !mode) continue;
 
-			if (getDistance([lastLatitude, lastLongitude], [latitude, longitude]) < 1000) {
-				grouped.set(lastIndex!, [
-					...grouped.get(lastIndex)!,
+			if (getDistance([lastLatitude, lastLongitude], [latitude, longitude]) < 10) {
+				grouped.set(lastId!, [
+					...grouped.get(lastId)!,
 					{
 						id_user,
 						latitude,
@@ -107,7 +109,7 @@ export function getGeoGroups(
 					}
 				]);
 			} else {
-				grouped.set(index, [
+				grouped.set(id, [
 					{
 						id_user,
 						latitude,
@@ -127,5 +129,5 @@ export function getGeoGroups(
 
 	return Array.from(grouped.entries())
 		.splice(0, groupsLimit)
-		.map(([, locs]) => getGeoGroup(locs));
+		.map(([id, locs]) => getGeoGroup(id, locs));
 }

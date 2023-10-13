@@ -22,7 +22,7 @@
     state = "loading";
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        // console.log(position, position.coords.latitude, position.coords.longitude);
+        console.log(position, position.coords.latitude, position.coords.longitude);
         coords = position.coords;
         state = "idle";
         goto(`/map?latitude=${coords.latitude}&longitude=${coords.longitude}`);

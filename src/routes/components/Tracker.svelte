@@ -39,6 +39,7 @@
           return;
         }
         last_timestamp = position.timestamp;
+        console.log($mode);
         const res = await fetch("/api/location", {
           method: "POST",
           headers: {

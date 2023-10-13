@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { getContext, onMount } from "svelte";
+  import { afterUpdate, getContext, onMount } from "svelte";
   import { Icon, Style } from "ol/style";
   import { Feature } from "ol";
   import Point from "ol/geom/Point.js";
@@ -17,6 +17,8 @@
     instance: Map;
   };
 
+  let iconFeature: Feature | null = null;
+
   onMount(() => {
     const map = mapContext.instance;
 
@@ -29,7 +31,7 @@
         scale: 4
       })
     });
-    const iconFeature = new Feature({
+    iconFeature = new Feature({
       geometry: new Point(fromLonLat([ longitude, latitude ]))
     });
     iconFeature.setStyle(iconStyle);
@@ -48,4 +50,11 @@
       map.removeLayer(vectorLayer);
     };
   });
+
+  afterUpdate(() => {
+    const { latitude, longitude } = coords;
+    iconFeature?.setGeometry(new Point(fromLonLat([ longitude, latitude ])));
+  });
 </script>
+
+<div class="away" data-cy="center-marker"></div>
