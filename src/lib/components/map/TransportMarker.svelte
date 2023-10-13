@@ -28,7 +28,7 @@
         anchorXUnits: "fraction",
         anchorYUnits: "fraction",
         src: group.mode === "train" ? "/map/train.svg" : "/map/bus.svg",
-        scale: 2
+        scale: 3
       })
     });
     const iconFeature = new Feature({
