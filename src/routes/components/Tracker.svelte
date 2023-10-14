@@ -116,20 +116,14 @@
 	}
 </script>
 
-<div>
-	<button class='btn relative' class:btn-success={state === "tracking"} on:click={track}>
+<div class='text-center'>
+	<button class='btn btn-lg relative' class:btn-success={state === "tracking"} on:click={track}>
 		<Icon class='text-2xl' icon='basil:location-solid' />
 		<span>Track my location</span>
 	</button>
-	{#if state !== "idle"}
-		<button class='btn btn-error' on:click={stopTracking}>
-			<Icon icon='mdi:stop' class='text-2xl' />
-			<span>Stop</span>
-		</button>
-	{/if}
 </div>
 {#if state !== "idle"}
-	<div>
+	<div class='text-center'>
 		<div class='join'>
 			<button class='btn btn-lg join-item' class:btn-success={$mode.value === "bus"}
 							on:click={() => updateMode("bus")}>
@@ -140,6 +134,10 @@
 							on:click={() => updateMode("train")}>
 				<Icon class='text-2xl' icon='noto:train' />
 				<span>Train</span>
+			</button>
+			<button class='btn btn-error btn-lg join-item' on:click={stopTracking}>
+				<Icon icon='mdi:stop' class='text-2xl' />
+				<span>Stop</span>
 			</button>
 		</div>
 	</div>

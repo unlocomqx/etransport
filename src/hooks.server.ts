@@ -16,9 +16,18 @@ export const handle: Handle = async ({ event, resolve }) => {
 	event.locals.session = session;
 	event.locals.user = session?.user;
 
+	const cookie = event.cookies.get('theme');
+	const theme = JSON.parse(cookie || '"light"');
+	console.log(theme);
+
 	return resolve(event, {
 		filterSerializedResponseHeaders(name) {
 			return name === 'content-range';
+		},
+		transformPageChunk: ({ html, done }) => {
+			if (done) {
+				return html.replace('%sveltekit.theme%', theme);
+			}
 		}
 	});
 };

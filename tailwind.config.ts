@@ -1,5 +1,6 @@
 import type { Config } from 'tailwindcss';
 import * as colors from 'tailwindcss/colors';
+import daisyui from 'daisyui';
 
 export default {
 	content: ['./src/**/*.{html,js,svelte,ts}'],
@@ -11,8 +12,8 @@ export default {
 			}
 		}
 	},
-	plugins: [require('daisyui')],
+	plugins: [daisyui],
 	daisyui: {
-		themes: ['light', 'dark', 'dracula']
+		themes: ['light', 'night', 'dark', 'dracula']
 	}
 } satisfies Config;

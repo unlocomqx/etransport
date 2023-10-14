@@ -117,7 +117,7 @@
 				scale: 1
 			}),
 			text: new Text({
-				text: group.total_reputation.toString(),
+				text: group.count.toString(),
 				offsetY: -6,
 				font: 'bold 16px sans-serif',
 				justify: 'center',
