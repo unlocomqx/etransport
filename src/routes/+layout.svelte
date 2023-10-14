@@ -41,7 +41,7 @@
 </script>
 
 <div>
-	<div class='navbar bg-base-100 gap-4'>
+	<div class='navbar bg-base-100 gap-2'>
 		<div class='flex-none'>
 			<button class='btn btn-square btn-ghost'>
 				<svg class='inline-block w-5 h-5 stroke-current' fill='none' viewBox='0 0 24 24'
@@ -79,7 +79,7 @@
 				<button class='btn btn-ghost btn-circle avatar'>
 					<img src='{session.user.user_metadata.avatar_url}' alt='Avatar' class='rounded-full' />
 				</button>
-				<ul class='mt-3 p-2 shadow menu menu-sm dropdown-content rounded-box z-10'>
+				<ul class='bg-neutral mt-3 p-2 shadow menu menu-sm dropdown-content rounded-box z-10'>
 					<li>
 						<form action='/?/logout' method='post'>
 							<button class='btn block w-full' type='submit'>Logout</button>
