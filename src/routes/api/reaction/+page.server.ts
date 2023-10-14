@@ -31,7 +31,7 @@ export const actions = {
 			const ip = event.getClientAddress();
 			await db.transaction(async (trx) => {
 				for (const location of location_rows) {
-					const upvote = await db
+					const upvote = await trx
 						.select()
 						.from(reactions)
 						.where(
@@ -43,7 +43,7 @@ export const actions = {
 						)
 						.then((rows) => rows[0]);
 					if (!upvote) {
-						await db
+						await trx
 							.insert(users_reputation)
 							.values({
 								id_user: location.id_user,
@@ -55,12 +55,12 @@ export const actions = {
 									reputation: sql`${users_reputation.reputation} + 1`
 								}
 							});
-						await db.insert(reactions).values({
+						await trx.insert(reactions).values({
 							id_location: location.id,
 							ip,
 							type: 'upvote'
 						});
-						await db
+						await trx
 							.delete(reactions)
 							.where(
 								and(
@@ -105,7 +105,7 @@ export const actions = {
 			const ip = event.getClientAddress();
 			await db.transaction(async (trx) => {
 				for (const location of location_rows) {
-					const downvote = await db
+					const downvote = await trx
 						.select()
 						.from(reactions)
 						.where(
@@ -117,7 +117,7 @@ export const actions = {
 						)
 						.then((rows) => rows[0]);
 					if (!downvote) {
-						await db
+						await trx
 							.insert(users_reputation)
 							.values({
 								id_user: location.id_user,
@@ -129,12 +129,12 @@ export const actions = {
 									reputation: sql`${users_reputation.reputation} - 1`
 								}
 							});
-						await db.insert(reactions).values({
+						await trx.insert(reactions).values({
 							id_location: location.id,
 							ip,
 							type: 'downvote'
 						});
-						await db
+						await trx
 							.delete(reactions)
 							.where(
 								and(
