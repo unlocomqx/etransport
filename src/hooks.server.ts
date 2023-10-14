@@ -18,7 +18,6 @@ export const handle: Handle = async ({ event, resolve }) => {
 
 	const cookie = event.cookies.get('theme');
 	const theme = JSON.parse(cookie || '"light"');
-	console.log(theme);
 
 	return resolve(event, {
 		filterSerializedResponseHeaders(name) {
