@@ -3,14 +3,23 @@ import type { LocationRow } from '../../src/lib/schemas/db/schema';
 import { faker } from '@faker-js/faker';
 import { exec } from 'child-process-promise';
 
-export async function seedLocations({ count }) {
+export async function seedLocations(
+	settings: {
+		count?: number;
+		radius?: number;
+	} = {}
+) {
+	const location_settings = {
+		count: 100,
+		radius: 20,
+		...settings
+	};
 	await seed('reset');
 	const origin: [number, number] = [35.765249, 10.809677];
-	const rows: LocationRow[] = [...Array(count)].map((_, index) => {
-		console.log(index);
+	const rows: LocationRow[] = [...Array(location_settings.count)].map((_, index) => {
 		const location = faker.location.nearbyGPSCoordinate({
 			origin,
-			radius: 20,
+			radius: location_settings.radius,
 			isMetric: true
 		});
 		return {
@@ -54,6 +63,18 @@ export async function insertLocation(location: LocationRow) {
 										'${location.timestamp}',
 										'${location.mode}'
 									);`;
+	const command = `psql -U postgres -c "${query}" -d etransport_test`;
+	return exec(command);
+}
+
+export function updateLocation({ id, location }: { id: string; location: LocationRow }) {
+	const query = `UPDATE locations SET 
+									id_user = ${location.id_user ? `'${location.id_user}'` : 'id_user'},
+									latitude = ${location.latitude ? location.latitude : 'latitude'},
+									longitude = ${location.longitude ? location.longitude : 'longitude'},
+									timestamp = ${location.timestamp ? `'${location.timestamp}'` : 'timestamp'},
+									mode = ${location.mode ? `'${location.mode}'` : 'mode'}
+								WHERE id = '${id}';`;
 	const command = `psql -U postgres -c "${query}" -d etransport_test`;
 	return exec(command);
 }

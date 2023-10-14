@@ -4,7 +4,7 @@ import watch from 'cypress-watch-and-reload/plugins';
 import { seed } from './cypress/plugins/seed';
 import vitePreprocessor from 'cypress-vite';
 import { cypressBrowserPermissionsPlugin } from 'cypress-browser-permissions';
-import { insertLocation, seedLocations } from './cypress/plugins/seed-locations';
+import { insertLocation, seedLocations, updateLocation } from './cypress/plugins/seed-locations';
 
 export default defineConfig({
 	video: false,
@@ -19,7 +19,8 @@ export default defineConfig({
 					return seed(spec);
 				},
 				seedLocations,
-				insertLocation
+				insertLocation,
+				updateLocation
 			});
 
 			on(

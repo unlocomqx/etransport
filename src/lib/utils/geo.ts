@@ -103,7 +103,7 @@ export function getGeoGroups(
 
 			const distance = getDistance([lastLatitude, lastLongitude], [latitude, longitude]);
 			const time_diff = Math.abs(timestamp!.getTime() - lastTimestamp!.getTime()) / 1000;
-			if (distance < 10 && time_diff < 60) {
+			if (distance < 50 && time_diff < 60) {
 				grouped.set(lastId!, [
 					...grouped.get(lastId)!,
 					{
