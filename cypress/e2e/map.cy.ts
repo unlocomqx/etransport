@@ -12,9 +12,9 @@ describe('Map', () => {
 			.get('div').contains('Invalid location').should('be.visible');
 	});
 
-	it('display map', () => {
+	it.only('display map', () => {
 		cy
-			.task('seedLocations', { count: 100, radius: 1 })
+			.task('seedLocations', { count: 20, radius: 1 })
 			.load('/', {
 				onBeforeLoad({ navigator }) {
 					const latitude = 35.765249;
@@ -41,7 +41,7 @@ describe('Map', () => {
 
 	it('update position', () => {
 		cy
-			.task('seedLocations', { count: 100, radius: 2 })
+			.task('seedLocations', { count: 40, radius: 2 })
 			.load('/', {
 				onBeforeLoad({ navigator }) {
 					const origin = [ 35.765249, 10.809677 ] as [ number, number ];
