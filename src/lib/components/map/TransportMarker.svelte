@@ -26,6 +26,7 @@
 		key;
 	}
 
+	let vectorLayer: VectorLayer | null = null;
 	let iconStyle: Style | null = null;
 	let iconFeature: Feature | null = null;
 	let popup: Overlay | null = null;
@@ -50,8 +51,9 @@
 			features: [ iconFeature ]
 		});
 
-		const vectorLayer = new VectorLayer({
-			source: vectorSource
+		vectorLayer = new VectorLayer({
+			source: vectorSource,
+			opacity: getOpacity()
 		});
 
 		map.addLayer(vectorLayer);
@@ -130,9 +132,14 @@
 		});
 	}
 
+	function getOpacity() {
+		return group.total_reputation > 0 ? 1 : 0.7;
+	}
+
 	function updateIcon() {
 		if (!latitude || !longitude) return;
 
+		vectorLayer?.setOpacity(getOpacity());
 		iconFeature?.setGeometry(new Point(fromLonLat([ longitude, latitude ])));
 		iconFeature?.setStyle(getStyle());
 	}

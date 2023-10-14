@@ -141,7 +141,7 @@ describe('Map', () => {
 			})
 			.wait(1000)
 			.get('.ol-layer').click()
-			.wait(500);
-		// .get(`[data-cy=upvote-btn]:visible`).click();
+			.wait(500)
+			.get(`[data-cy=upvote-btn]:visible`).click();
 	});
 });
