@@ -3,7 +3,7 @@ import type { LocationRow } from '$lib/schemas/db/schema';
 import type { Coords } from '$lib/types';
 
 export type GeoGroup = Partial<LocationRow> & {
-	id_users: string[];
+	ids: string[];
 	count: number;
 };
 
@@ -52,7 +52,7 @@ export function getGeoGroup(id: string, locations: Partial<LocationRow>[]): GeoG
 	const lng = (lonResult * 180) / Math.PI;
 	return {
 		id,
-		id_users: locations.map((loc) => loc.id_user).map((id) => id!),
+		ids: locations.map((loc) => loc.id).map((id) => id!),
 		latitude: lat,
 		longitude: lng,
 		mode: mostUsedMode,
@@ -86,6 +86,7 @@ export function getGeoGroups(
 		if (index === lastIndex) {
 			grouped.set(id, [
 				{
+					id,
 					id_user,
 					latitude,
 					longitude,
@@ -107,6 +108,7 @@ export function getGeoGroups(
 				grouped.set(lastId!, [
 					...grouped.get(lastId)!,
 					{
+						id,
 						id_user,
 						latitude,
 						longitude,
@@ -116,6 +118,7 @@ export function getGeoGroups(
 			} else {
 				grouped.set(id, [
 					{
+						id,
 						id_user,
 						latitude,
 						longitude,

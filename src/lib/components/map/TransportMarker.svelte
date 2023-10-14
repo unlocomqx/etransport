@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import type { GeoGroup } from '$lib/utils/geo';
-	import { Fill, Icon, Stroke, Style, Text } from 'ol/style';
+	import { Fill, Icon as olIcon, Stroke, Style, Text } from 'ol/style';
 	import { Feature, Overlay } from 'ol';
 	import { getContext, onMount } from 'svelte';
 	import type Map from 'ol/Map';
@@ -8,6 +8,9 @@
 	import { fromLonLat } from 'ol/proj';
 	import { Vector } from 'ol/source';
 	import { Vector as VectorLayer } from 'ol/layer';
+	import Icon from '@iconify/svelte';
+	import { enhance } from '$app/forms';
+	import { formToaster } from '$lib/utils/form_toaster.js';
 
 	export let group: GeoGroup;
 
@@ -95,7 +98,7 @@
 
 	function getStyle() {
 		return new Style({
-			image: new Icon({
+			image: new olIcon({
 				anchor: [ 0.5, .85 ],
 				anchorXUnits: 'fraction',
 				anchorYUnits: 'fraction',
@@ -151,6 +154,22 @@
 		 data-cy-mode='{group.mode}'
 ></div>
 
-<div bind:this={popover} class='p-4 rounded w-fit bg-white opacity-0 transition-opacity'>
-	This is a popover
+<div bind:this={popover} class='text-center p-4 rounded w-fit bg-white opacity-0 transition-opacity'>
+	<form method='post' use:enhance={formToaster()}>
+		{#each group.ids as id}
+			<input name='ids[]' type='hidden' value='{id}'>
+		{/each}
+		<input name='mode' type='hidden' value='{group.mode}'>
+		<p class='text-2xl'>
+			This marker is correct?
+		</p>
+		<div class='mt-4'>
+			<button class='btn btn-success' data-cy='upvote-btn' formaction='/api/reaction?/upvote'>
+				<Icon class='text-2xl' icon='mdi:arrow-up' />
+			</button>
+			<button class='btn btn-error' data-cy='downvote-btn' formaction='/api/reaction?/downvote'>
+				<Icon class='text-2xl' icon='mdi:arrow-down' />
+			</button>
+		</div>
+	</form>
 </div>

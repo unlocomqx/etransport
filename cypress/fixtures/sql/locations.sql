@@ -41,6 +41,9 @@ VALUES ('8', 'ppW-f2rGTEjrbl142i6fi', 35.76832, 10.810262, '2023-10-14 10:16:40.
 INSERT INTO public.locations (id, id_user, latitude, longitude, "timestamp", mode)
 VALUES ('9', 'x5Uics4122zaDAuVw2cUd', 35.765285, 10.809438, '2023-10-14 11:28:32.349+01', 'train');
 
+INSERT INTO public.users_reputation (id_user, reputation, create_date, update_date)
+VALUES ('new-user', 1, '2023-10-14 16:42:52.431837 +00:00', '2023-10-14 16:42:52.431837 +00:00');
+
 
 --
 -- PostgreSQL database dump complete

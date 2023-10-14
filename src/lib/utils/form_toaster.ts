@@ -1,7 +1,7 @@
 import type { SubmitFunction } from '@sveltejs/kit';
 import { toast } from 'svelte-sonner';
 
-export const formToaster = (cb: SubmitFunction) => {
+export const formToaster = (cb: SubmitFunction = () => {}) => {
 	return ((params) => {
 		const cb_result = cb(params);
 

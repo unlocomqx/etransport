@@ -15,6 +15,13 @@
       "when": 1696865700215,
       "tag": "0001_bouncy_brood",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1697300928348,
+      "tag": "0002_empty_hobgoblin",
+      "breakpoints": true
     }
   ]
 }

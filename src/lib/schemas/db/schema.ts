@@ -1,5 +1,6 @@
 import { pgEnum, pgTable, real, timestamp, varchar } from 'drizzle-orm/pg-core';
 import { nanoid } from 'nanoid';
+import { sql } from 'drizzle-orm';
 
 export const modeEnum = pgEnum('mode', ['', 'bus', 'train']);
 
@@ -13,3 +14,16 @@ export const locations = pgTable('locations', {
 });
 
 export type LocationRow = typeof locations.$inferSelect;
+
+export const users_reputation = pgTable('users_reputation', {
+	id_user: varchar('id_user').primaryKey().notNull(),
+
+	reputation: real('reputation').notNull().default(0),
+
+	created_at: timestamp('create_date', { withTimezone: true })
+		.notNull()
+		.default(sql`now()`),
+	updated_at: timestamp('update_date', { withTimezone: true })
+		.notNull()
+		.default(sql`now()`)
+});

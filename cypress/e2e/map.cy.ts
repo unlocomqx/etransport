@@ -112,12 +112,22 @@ describe('Map', () => {
 			.task('updateLocation', {
 				id: '9',
 				location: {
+					mode: 'bus',
 					timestamp: (new Date(Date.now() - 10000)).toISOString()
 				}
 			})
+			.task('insertLocation', {
+				id: 'new-location',
+				id_user: 'new-user',
+				latitude: 35.765249,
+				longitude: 10.809677,
+				timestamp: (new Date(Date.now() - 10000)).toISOString(),
+				mode: 'bus'
+			})
 			.load('/map?latitude=35.765249&longitude=10.809677')
 			.wait(1000)
-			.get('.ol-layer').click();
-
+			.get('.ol-layer').click()
+			.wait(500)
+			.get(`[data-cy=upvote-btn]:visible`).click();
 	});
 });
