@@ -15,7 +15,10 @@
 	$: icon = group.mode === 'train' ? '/map/train.png' : '/map/bus.png';
 
 	$: key = `${group.id}-${latitude}-${longitude}-${icon}-${group.count}`;
-	$: updateIcon(), key;
+	$: {
+		updateIcon();
+		key;
+	}
 
 	let iconStyle: Style | null = null;
 	let iconFeature: Feature | null = null;
