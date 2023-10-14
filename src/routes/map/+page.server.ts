@@ -2,9 +2,9 @@ import type { PageServerLoad } from './$types';
 import type { Actions } from '@sveltejs/kit';
 import { redirect } from 'sveltekit-flash-message/server';
 import { db } from '$lib/db/client';
-import { type LocationRow, locations } from '$lib/schemas/db/schema';
-import { between, desc } from 'drizzle-orm';
-import { type GeoGroup, getGeoGroups } from '$lib/utils/geo';
+import { locations, users_reputation } from '$lib/schemas/db/schema';
+import { between, desc, eq } from 'drizzle-orm';
+import { type GeoGroup, getGeoGroups, type UserLocation } from '$lib/utils/geo';
 
 export const actions = {
 	async default(event) {
@@ -37,13 +37,16 @@ export const load = (async (event) => {
 				latitude: locations.latitude,
 				longitude: locations.longitude,
 				timestamp: locations.timestamp,
-				mode: locations.mode
+				mode: locations.mode,
+				reputation: users_reputation.reputation
 			})
 			.from(locations)
+			.leftJoin(users_reputation, eq(locations.id_user, users_reputation.id_user))
 			.where(between(locations.timestamp, new Date(Date.now() - 1000 * 3600), new Date()))
 			.orderBy(desc(locations.timestamp))
 			.execute();
-		groups = getGeoGroups(recent_locations as LocationRow[], { latitude, longitude });
+		console.log(recent_locations);
+		groups = getGeoGroups(recent_locations as UserLocation[], { latitude, longitude });
 	} catch (e) {
 		console.error(e);
 		throw redirect('/', { type: 'error', message: 'Could not fetch location data' }, event);

@@ -18,7 +18,7 @@
 	$: ({ latitude, longitude } = group);
 	$: icon = group.mode === 'train' ? '/map/train.png' : '/map/bus.png';
 
-	$: key = `${group.id}-${latitude}-${longitude}-${icon}-${group.count}`;
+	$: key = `${group.id}-${latitude}-${longitude}-${icon}-${group.count}-${group.total_reputation}`;
 	$: {
 		updateIcon();
 		key;
@@ -106,7 +106,7 @@
 				scale: 1
 			}),
 			text: new Text({
-				text: group.count.toString(),
+				text: group.total_reputation.toString(),
 				offsetY: -6,
 				font: 'bold 16px sans-serif',
 				justify: 'center',
@@ -154,14 +154,17 @@
 		 data-cy-mode='{group.mode}'
 ></div>
 
-<div bind:this={popover} class='text-center p-4 rounded w-fit bg-white opacity-0 transition-opacity'>
+<div bind:this={popover} class='text-center p-4 rounded w-fit max-w-md bg-white opacity-0 transition-opacity'>
 	<form method='post' use:enhance={formToaster()}>
 		{#each group.ids as id}
 			<input name='ids[]' type='hidden' value='{id}'>
 		{/each}
 		<input name='mode' type='hidden' value='{group.mode}'>
-		<p class='text-2xl'>
-			This marker is correct?
+		<p class='text-2xl font-bold'>
+			{group.count} passenger{group.count > 1 ? 's' : ''} reported the location of this {group.mode}.
+		</p>
+		<p class='text-2xl mt-4 text-gray-500'>
+			Is this marker correct?
 		</p>
 		<div class='mt-4'>
 			<button class='btn btn-success' data-cy='upvote-btn' formaction='/api/reaction?/upvote'>
