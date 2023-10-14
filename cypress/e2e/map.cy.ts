@@ -41,7 +41,7 @@ describe('Map', () => {
 
 	it('update position', () => {
 		cy
-			.task('seedLocations', { count: 100 })
+			.task('seedLocations', { count: 100, radius: 2 })
 			.load('/', {
 				onBeforeLoad({ navigator }) {
 					const origin = [ 35.765249, 10.809677 ] as [ number, number ];
@@ -64,7 +64,7 @@ describe('Map', () => {
 			.get(`[data-cy=update-position]`).click();
 	});
 
-	it.only('display count', () => {
+	it('display count', () => {
 		cy
 			.task('seed', { spec: 'locations' })
 			.task('updateLocation', {
