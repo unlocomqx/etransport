@@ -14,6 +14,6 @@ export default {
 	},
 	plugins: [daisyui],
 	daisyui: {
-		themes: ['light', 'night', 'dark', 'dracula']
+		themes: ['light', 'lemonade', 'night', 'dark', 'dracula']
 	}
 } satisfies Config;

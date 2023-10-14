@@ -10,6 +10,7 @@
 
 <button
 	class='border-base-content/20 hover:border-base-content/40 overflow-hidden rounded-lg border outline outline-2 outline-offset-2 outline-transparent'
+	class:!outline-secondary-focus={$themeStore == theme}
 	on:click={setTheme}>
 	<div class='bg-base-100 text-base-content w-full cursor-pointer font-sans' data-theme='{theme}'>
 		<div class='grid grid-cols-5 grid-rows-3'>

@@ -32,7 +32,7 @@
 		return () => data.subscription.unsubscribe();
 	});
 
-	let themes = [ 'light', 'dark', 'dracula', 'night' ];
+	let themes = [ 'light', 'lemonade', 'dark', 'dracula', 'night' ];
 	onMount(() => {
 		return theme.subscribe((current_theme) => {
 			document.documentElement.dataset.theme = current_theme;
