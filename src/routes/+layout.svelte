@@ -58,7 +58,7 @@
 				<Icon class='text-3xl' icon='mdi:brush' />
 			</button>
 			<ul
-				class='mt-3 p-2 shadow menu menu-sm dropdown-content rounded-box z-10 w-[178px]'>
+				class='bg-neutral flex flex-col gap-2 mt-3 p-2 shadow menu menu-sm dropdown-content rounded-box z-10 w-[178px]'>
 				{#each themes as theme}
 					<li>
 						<ThemeBtn {theme} />
