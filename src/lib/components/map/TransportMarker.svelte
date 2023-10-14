@@ -140,7 +140,6 @@
 	$: updatePopup(popover);
 
 	async function updatePopup(popover: HTMLDivElement) {
-		console.log({ display_popover });
 		if (!popup) return;
 
 		const map = mapContext.instance;
