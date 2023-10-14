@@ -27,3 +27,10 @@ export const users_reputation = pgTable('users_reputation', {
 		.notNull()
 		.default(sql`now()`)
 });
+
+export const reactions = pgTable('reactions', {
+	id: varchar('id').primaryKey().$defaultFn(nanoid),
+	id_location: varchar('id_location').notNull(),
+	ip: varchar('ip').notNull(),
+	type: varchar('type').notNull()
+});
