@@ -12,7 +12,7 @@ describe('Map', () => {
 			.get('div').contains('Invalid location').should('be.visible');
 	});
 
-	it.only('display map', () => {
+	it('display map', () => {
 		cy
 			.task('seedLocations', { count: 20, radius: 1 })
 			.load('/', {
@@ -98,5 +98,26 @@ describe('Map', () => {
 			.get(`[data-cy=update-position]`).click()
 			.get(`[data-cy-id=new-location]`)
 			.should('have.attr', 'data-cy-count', '2');
+	});
+
+	it.only('display popover', () => {
+		cy
+			.task('seed', { spec: 'locations' })
+			.task('updateLocation', {
+				id: '8',
+				location: {
+					timestamp: (new Date(Date.now() - 10000)).toISOString()
+				}
+			})
+			.task('updateLocation', {
+				id: '9',
+				location: {
+					timestamp: (new Date(Date.now() - 10000)).toISOString()
+				}
+			})
+			.load('/map?latitude=35.765249&longitude=10.809677')
+			.wait(1000)
+			.get('.ol-layer').click();
+
 	});
 });
