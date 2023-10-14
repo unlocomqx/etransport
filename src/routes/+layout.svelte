@@ -46,7 +46,7 @@
 	{#if !session}
 		<div>
 			<a class='btn' href='/login'>
-				<Icon class='text-2xl' icon='solar:login-3-bold' />
+				<Icon class='text-2xl' icon='flat-color-icons:google' />
 				<span>Login</span>
 			</a>
 		</div>

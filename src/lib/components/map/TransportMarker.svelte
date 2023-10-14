@@ -15,6 +15,8 @@
 	export let group: GeoGroup;
 
 	let popover: HTMLDivElement;
+	let display_popover = false;
+
 	$: ({ latitude, longitude } = group);
 	$: icon = group.mode === 'train' ? '/map/train.png' : '/map/bus.png';
 
@@ -63,9 +65,10 @@
 		});
 		map.addOverlay(popup);
 
-		map.on('click', function(evt) {
+		const handleClick = function(evt: any) {
 			if (!latitude || !longitude || !popup) return;
 
+			display_popover = false;
 			Object.assign(popover.style, {
 				opacity: 0,
 				pointerEvents: 'none'
@@ -85,14 +88,20 @@
 				center: evt.coordinate,
 				duration: 500
 			});
+			display_popover = true;
 			Object.assign(popover.style, {
 				opacity: 1,
 				pointerEvents: 'auto'
 			});
-		});
+		};
+		map.on('click', handleClick);
 
 		return () => {
 			map.removeLayer(vectorLayer);
+			if (popup) {
+				map.removeOverlay(popup);
+			}
+			map.removeEventListener('click', handleClick);
 		};
 	});
 
@@ -131,6 +140,7 @@
 	$: updatePopup(popover);
 
 	async function updatePopup(popover: HTMLDivElement) {
+		console.log({ display_popover });
 		if (!popup) return;
 
 		const map = mapContext.instance;
@@ -144,6 +154,13 @@
 			offset: [ 0, -50 ]
 		});
 		map.addOverlay(popup);
+
+		if (display_popover) {
+			Object.assign(popover.style, {
+				opacity: 1,
+				pointerEvents: 'auto'
+			});
+		}
 	}
 </script>
 
