@@ -95,6 +95,7 @@ describe('Map', () => {
 				timestamp: (new Date(Date.now() - 10000)).toISOString(),
 				mode: 'bus'
 			})
+			.get(`[data-cy=update-position]`).click()
 			.get(`[data-cy-id=new-location]`)
 			.should('have.attr', 'data-cy-count', '2');
 	});
