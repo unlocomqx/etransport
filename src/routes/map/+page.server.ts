@@ -45,7 +45,6 @@ export const load = (async (event) => {
 			.where(between(locations.timestamp, new Date(Date.now() - 1000 * 3600), new Date()))
 			.orderBy(desc(locations.timestamp))
 			.execute();
-		console.log(recent_locations);
 		groups = getGeoGroups(recent_locations as UserLocation[], { latitude, longitude });
 	} catch (e) {
 		console.error(e);
