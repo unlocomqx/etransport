@@ -12,9 +12,9 @@ describe("Map", () => {
       .get("div").contains("Invalid location").should("be.visible");
   });
 
-  it.only("display map", () => {
+  it("display map", () => {
     cy
-      .task("seedLocations")
+      .task("seedLocations", { count: 100 })
       .load("/", {
         onBeforeLoad({ navigator }) {
           const latitude = 35.765249;
@@ -23,14 +23,25 @@ describe("Map", () => {
             .callsArgWith(0, { coords: { latitude, longitude } });
         }
       })
-      .get("button").contains("Find transport").click();
-    // .get(`[data-cy=transport-marker]`).should("have.length", 10)
-    // .get(`[data-cy=center-marker]`).should("exist");
+      .get("button").contains("Find transport").click()
+      .get(`[data-cy=center-marker]`).should("exist")
+      .get(`[data-cy=transport-marker]`).should("exist")
+      .wait(1000)
+      .task("insertLocation", {
+        id: "new-location",
+        id_user: "new-user",
+        latitude: 35.765249,
+        longitude: 10.809677,
+        timestamp: (new Date()).toISOString(),
+        mode: "bus"
+      })
+      .get(`[data-cy-id=new-location]`)
+      .should("have.attr", "data-cy-mode", "bus");
   });
 
-  it("update position", () => {
+  it.only("update position", () => {
     cy
-      .task("seedLocations")
+      .task("seedLocations", { count: 100 })
       .load("/", {
         onBeforeLoad({ navigator }) {
           const origin = [ 35.765249, 10.809677 ] as [ number, number ];

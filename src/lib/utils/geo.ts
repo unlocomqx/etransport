@@ -65,11 +65,12 @@ export function getGeoGroups(
 	origin: Coords,
 	limit: number | undefined = undefined
 ): GeoGroup[] {
-	const distances = locations.map(({ id, id_user, latitude, longitude, mode }) => ({
+	const distances = locations.map(({ id, id_user, latitude, longitude, timestamp, mode }) => ({
 		id,
 		id_user,
 		latitude,
 		longitude,
+		timestamp,
 		distance: getDistance([origin.latitude, origin.longitude], [latitude, longitude]),
 		mode
 	}));
@@ -77,7 +78,9 @@ export function getGeoGroups(
 	const grouped = new Map<string, Partial<LocationRow>[]>();
 	let lastIndex = 0;
 	for (let index = 0; index < sorted.length; index++) {
-		const { id, id_user, latitude, longitude, mode } = sorted[index] as Partial<LocationRow>;
+		const { id, id_user, latitude, longitude, timestamp, mode } = sorted[
+			index
+		] as Partial<LocationRow>;
 		if (!id || !id_user || !latitude || !longitude || !mode) continue;
 
 		if (index === lastIndex) {
@@ -94,11 +97,13 @@ export function getGeoGroups(
 				id: lastId,
 				latitude: lastLatitude,
 				longitude: lastLongitude,
-				mode
+				timestamp: lastTimestamp
 			} = sorted[lastIndex] as Partial<LocationRow>;
-			if (!lastId || !lastLatitude || !lastLongitude || !mode) continue;
+			if (!lastId || !lastLatitude || !lastLongitude) continue;
 
-			if (getDistance([lastLatitude, lastLongitude], [latitude, longitude]) < 10) {
+			const distance = getDistance([lastLatitude, lastLongitude], [latitude, longitude]);
+			const time_diff = Math.abs(timestamp!.getTime() - lastTimestamp!.getTime()) / 1000;
+			if (distance < 10 && time_diff < 60) {
 				grouped.set(lastId!, [
 					...grouped.get(lastId)!,
 					{

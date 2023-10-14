@@ -74,14 +74,14 @@ devDependencies:
     specifier: ^2.2.1
     version: 2.2.1
   cypress:
-    specifier: ^13.3.0
-    version: 13.3.0
+    specifier: ^13.3.1
+    version: 13.3.1
   cypress-browser-permissions:
     specifier: ^1.1.0
-    version: 1.1.0(cypress@13.3.0)
+    version: 1.1.0(cypress@13.3.1)
   cypress-file-upload:
     specifier: ^5.0.8
-    version: 5.0.8(cypress@13.3.0)
+    version: 5.0.8(cypress@13.3.1)
   cypress-vite:
     specifier: ^1.4.2
     version: 1.4.2(vite@4.4.11)
@@ -1491,22 +1491,22 @@ packages:
     hasBin: true
     dev: true
 
-  /cypress-browser-permissions@1.1.0(cypress@13.3.0):
+  /cypress-browser-permissions@1.1.0(cypress@13.3.1):
     resolution: {integrity: sha512-/pLwCWIXqcmWga3LQmLUDplGCT+e490H8CeqztIXwy8bsMCK4EHTuoRgTcNwYGipdb00omgTfby7jIDPp2a01Q==}
     peerDependencies:
       cypress: '>= 4'
     dependencies:
-      cypress: 13.3.0
+      cypress: 13.3.1
       lodash: 4.17.21
     dev: true
 
-  /cypress-file-upload@5.0.8(cypress@13.3.0):
+  /cypress-file-upload@5.0.8(cypress@13.3.1):
     resolution: {integrity: sha512-+8VzNabRk3zG6x8f8BWArF/xA/W0VK4IZNx3MV0jFWrJS/qKn8eHfa5nU73P9fOQAgwHFJx7zjg4lwOnljMO8g==}
     engines: {node: '>=8.2.1'}
     peerDependencies:
       cypress: '>3.0.0'
     dependencies:
-      cypress: 13.3.0
+      cypress: 13.3.1
     dev: true
 
   /cypress-vite@1.4.2(vite@4.4.11):
@@ -1532,8 +1532,8 @@ packages:
       - utf-8-validate
     dev: true
 
-  /cypress@13.3.0:
-    resolution: {integrity: sha512-mpI8qcTwLGiA4zEQvTC/U1xGUezVV4V8HQCOYjlEOrVmU1etVvxOjkCXHGwrlYdZU/EPmUiWfsO3yt1o+Q2bgw==}
+  /cypress@13.3.1:
+    resolution: {integrity: sha512-g4mJLZxYN+UAF2LMy3Znd4LBnUmS59Vynd81VES59RdW48Yt+QtR2cush3melOoVNz0PPbADpWr8DcUx6mif8Q==}
     engines: {node: ^16.0.0 || ^18.0.0 || >=20.0.0}
     hasBin: true
     requiresBuild: true

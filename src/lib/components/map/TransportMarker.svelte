@@ -1,9 +1,9 @@
 <script lang="ts">
   import type { GeoGroup } from "$lib/utils/geo";
-  import { afterUpdate, getContext, onMount } from "svelte";
-  import type Map from "ol/Map";
   import { Icon, Style } from "ol/style";
   import { Feature } from "ol";
+  import { getContext, onMount } from "svelte";
+  import Map from "ol/Map";
   import Point from "ol/geom/Point";
   import { fromLonLat } from "ol/proj";
   import { Vector } from "ol/source";
@@ -11,19 +11,21 @@
 
   export let group: GeoGroup;
 
-  const { latitude, longitude } = group;
+  $: ({ latitude, longitude } = group);
+  $: icon = group.mode === "train" ? "/map/train.png" : "/map/bus.png";
+
+  $: key = `${group.id}-${latitude}-${longitude}-${icon}`;
+  $: updateIcon(), key;
+
+  let iconStyle: Style | null = null;
+  let iconFeature: Feature | null = null;
 
   const mapContext = getContext("map") as {
     instance: Map;
   };
 
-  let iconStyle: Style | null = null;
-  let iconFeature: Feature | null = null;
-
   onMount(() => {
     if (!latitude || !longitude) return;
-
-    console.log("mount", group);
 
     const map = mapContext.instance;
 
@@ -32,7 +34,7 @@
         anchor: [ 0.5, .85 ],
         anchorXUnits: "fraction",
         anchorYUnits: "fraction",
-        src: group.mode === "train" ? "/map/train.png" : "/map/bus.png",
+        src: icon,
         scale: .75
       })
     });
@@ -57,8 +59,7 @@
     };
   });
 
-  afterUpdate(() => {
-    const { latitude, longitude } = group;
+  function updateIcon() {
     if (!latitude || !longitude) return;
 
     iconFeature?.setGeometry(new Point(fromLonLat([ longitude, latitude ])));
@@ -67,11 +68,15 @@
         anchor: [ 0.5, .85 ],
         anchorXUnits: "fraction",
         anchorYUnits: "fraction",
-        src: group.mode === "train" ? "/map/train.png" : "/map/bus.png",
+        src: icon,
         scale: .75
       })
     }));
-  });
+  }
 </script>
 
-<div class="away" data-cy="transport-marker"></div>
+<div class="away"
+     data-cy="transport-marker"
+     data-cy-id="{group.id}"
+     data-cy-mode="{group.mode}"
+></div>

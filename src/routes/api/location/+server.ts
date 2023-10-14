@@ -68,6 +68,7 @@ export const POST: RequestHandler = async ({ request, locals: { session } }) => 
 			const inserted = await db
 				.insert(locations)
 				.values({
+					id: 'my-location',
 					id_user: form.data.id_user,
 					latitude: form.data.latitude,
 					longitude: form.data.longitude,

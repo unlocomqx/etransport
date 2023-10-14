@@ -26,12 +26,12 @@
       return;
     }
 
-    console.log("update");
+    // console.log("update");
 
     state = "loading";
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        console.log(position, position.coords.latitude, position.coords.longitude);
+        // console.log(position, position.coords.latitude, position.coords.longitude);
         latitude = position.coords.latitude;
         longitude = position.coords.longitude;
         state = "idle";
@@ -52,7 +52,7 @@
   onMount(() => {
     const interval = setInterval(() => {
       update();
-    }, 6000);
+    }, 3000);
 
     return () => {
       clearInterval(interval);
@@ -62,7 +62,7 @@
 
 <Map center={{latitude, longitude}}>
   <CenterMarker coords={{latitude, longitude}} />
-  {#each groups as group}
+  {#each groups as group (group.id)}
     <TransportMarker group={group} />
   {/each}
   <button class="btn btn-circle btn-secondary fixed bottom-4 right-4 z-10 overflow-hidden" data-cy="update-position"
