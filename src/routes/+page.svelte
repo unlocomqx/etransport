@@ -1,5 +1,7 @@
-<script lang="ts">
-  import Actions from "./components/Actions.svelte";
+<script lang='ts'>
+	import Actions from './components/Actions.svelte';
 </script>
 
-<Actions />
+<div class='p-4'>
+	<Actions />
+</div>

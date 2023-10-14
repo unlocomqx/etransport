@@ -8,7 +8,7 @@
 	import { toast } from 'svelte-sonner';
 	import Loading from '$lib/components/Loading.svelte';
 	import { onMount } from 'svelte';
-	import { goto } from '$app/navigation';
+	import { afterNavigate, beforeNavigate, goto } from '$app/navigation';
 
 	export let data: PageData;
 
@@ -58,6 +58,15 @@
 			clearInterval(interval);
 		};
 	});
+
+	let navigating = 'idle';
+	beforeNavigate(() => {
+		navigating = 'navigating';
+	});
+
+	afterNavigate(() => {
+		navigating = 'idle';
+	});
 </script>
 
 <Map center={{latitude, longitude}}>
@@ -73,9 +82,9 @@
 		{/if}
 	</button>
 	<button class='btn btn-circle btn-secondary fixed bottom-4 left-4 z-10 overflow-hidden' data-cy='update-position'
-					on:click={update}>
-		<Icon class='text-2xl' icon='mdi:my-location' />
-		{#if state === "loading"}
+					on:click={() => goto('/')}>
+		<Icon class='text-2xl' icon='mdi:arrow-left' />
+		{#if navigating === "navigating"}
 			<Loading />
 		{/if}
 	</button>
