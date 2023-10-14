@@ -70,7 +70,7 @@ describe('Map', () => {
 			.task('updateLocation', {
 				id: '9',
 				location: {
-					timestamp: (new Date()).toISOString()
+					timestamp: (new Date(Date.now() - 10000)).toISOString()
 				}
 			})
 			.load('/', {
@@ -84,6 +84,8 @@ describe('Map', () => {
 			.get('button').contains('Find transport').click()
 			.get(`[data-cy=center-marker]`).should('exist')
 			.get(`[data-cy=transport-marker]`).should('exist')
+			.get(`[data-cy-id=9]`)
+			.should('have.attr', 'data-cy-count', '1')
 			.wait(1000)
 			.task('insertLocation', {
 				id: 'new-location',
