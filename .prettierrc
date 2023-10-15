@@ -15,6 +15,12 @@
       "options": {
         "parser": "svelte"
       }
+    },
+    {
+      "files": "*.cy.ts",
+      "options": {
+        "semi": false
+      }
     }
   ]
 }

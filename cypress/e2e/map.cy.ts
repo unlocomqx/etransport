@@ -100,7 +100,7 @@ describe('Map', () => {
 			.should('have.attr', 'data-cy-count', '2');
 	});
 
-	it.only('display popover', () => {
+	it('display popover', () => {
 		cy
 			.task('seed', { spec: 'locations' })
 			.task('updateLocation', {
@@ -129,5 +129,46 @@ describe('Map', () => {
 			.get('.ol-layer').click()
 			.wait(500)
 			.get(`[data-cy=upvote-btn]:visible`).click();
+	});
+
+	it.only('display only last location from user', () => {
+		cy
+			.task('seed', { spec: 'user-locations' })
+			.task('updateLocation', {
+				id: '1',
+				location: {
+					timestamp: (new Date(Date.now() - 12000)).toISOString()
+				}
+			})
+			.task('updateLocation', {
+				id: '2',
+				location: {
+					mode: 'bus',
+					timestamp: (new Date(Date.now() - 10000)).toISOString()
+				}
+			})
+			.load('/', {
+				onBeforeLoad({ navigator }) {
+					const latitude = 35.765249;
+					const longitude = 10.809677;
+					cy.stub(navigator.geolocation, 'getCurrentPosition')
+						.callsArgWith(0, { coords: { latitude, longitude } });
+				}
+			})
+			.get('button').contains('Find transport').click()
+			.get(`[data-cy-id=2]`).should('exist')
+			.get(`[data-cy-id=1]`).should('not.exist')
+
+			.task('insertLocation', {
+				id: '3',
+				id_user: 'my-user',
+				latitude: 35.7746,
+				longitude: 10.823,
+				timestamp: (new Date(Date.now() - 3000)).toISOString(),
+				mode: 'bus'
+			})
+
+			.get(`[data-cy-id=2]`).should('not.exist')
+			.get(`[data-cy-id=3]`).should('exist');
 	});
 });

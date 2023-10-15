@@ -33,7 +33,7 @@
 		last_timestamp = 0;
 		tracking_id = navigator.geolocation.watchPosition(
 			async (position) => {
-				// console.log(position, position.coords.latitude, position.coords.longitude);
+				console.log(position, position.coords.latitude, position.coords.longitude);
 				if (position.timestamp - last_timestamp < 10000) {
 					console.log('Skipping location update, too soon.');
 					return;

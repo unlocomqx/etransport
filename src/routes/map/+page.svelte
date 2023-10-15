@@ -28,7 +28,7 @@
 			return;
 		}
 
-		// console.log("update");
+		console.log('update');
 
 		if (context === 'click') {
 			state = 'loading';
