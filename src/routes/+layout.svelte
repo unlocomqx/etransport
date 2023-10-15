@@ -101,11 +101,15 @@
 		<slot />
 	</div>
 
-	{#if $prompt && $interacted}
-		<div class='fixed bottom-0 left-0 w-full bg-neutral p-4 flex justify-end' transition:fade>
-			<button class='btn btn-secondary' on:click={install}>
+	{#if ($prompt && $interacted) || true}
+		<div class='fixed bottom-0 left-0 w-full bg-neutral p-4 flex items-center gap-4' transition:fade>
+			<span class='flex-1'></span>
+			<button class='btn btn-secondary self-end' on:click={install}>
 				<Icon class='text-2xl' icon='ic:round-install-mobile' />
 				<span>Install App</span>
+			</button>
+			<button class='btn' on:click={install}>
+				<Icon class='text-2xl' icon='mdi:close' />
 			</button>
 		</div>
 	{/if}
