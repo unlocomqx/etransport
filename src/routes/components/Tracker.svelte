@@ -134,7 +134,7 @@
 				<Icon class='text-2xl' icon='noto:oncoming-bus' />
 				<span>Bus</span>
 			</button>
-			<button class='btn btn-lg join-item' class:btn-success={$mode.value === "train"}
+			<button class='btn btn-lg join-item !rounded-r-lg md:!rounded-r-none' class:btn-success={$mode.value === "train"}
 							on:click={() => updateMode("train")}>
 				<Icon class='text-2xl' icon='noto:train' />
 				<span>Train</span>
