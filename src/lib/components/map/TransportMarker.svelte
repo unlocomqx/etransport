@@ -11,6 +11,7 @@
 	import Icon from '@iconify/svelte';
 	import { enhance } from '$app/forms';
 	import { formToaster } from '$lib/utils/form_toaster.js';
+	import { theme } from '$lib/stores/theme';
 
 	export let group: GeoGroup;
 
@@ -144,7 +145,8 @@
 		iconFeature?.setStyle(getStyle());
 	}
 
-	$: updatePopup(popover);
+	$: console.log($theme);
+	$: updatePopup(popover), $theme;
 
 	async function updatePopup(popover: HTMLDivElement) {
 		if (!popup) return;
@@ -177,7 +179,8 @@
 		 data-cy-mode='{group.mode}'
 ></div>
 
-<div bind:this={popover} class='text-center p-4 rounded max-w-xs md:max-w-md bg-neutral opacity-0 transition-opacity'>
+<div bind:this={popover}
+		 class='text-center p-4 rounded max-w-xs md:max-w-md bg-base-100 opacity-0 transition-opacity'>
 	<form method='post' use:enhance={formToaster()}>
 		{#each group.ids as id}
 			<input name='ids[]' type='hidden' value='{id}'>
