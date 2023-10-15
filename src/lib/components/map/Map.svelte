@@ -7,7 +7,6 @@
 	import { setContext } from 'svelte';
 	import type { Coords } from '$lib/types';
 	import { OSM } from 'ol/source';
-	import { isDarkTheme, theme } from '$lib/stores/theme';
 
 	export let center: Coords = { latitude: 0, longitude: 0 };
 
@@ -46,33 +45,6 @@
 			if (target instanceof HTMLElement) {
 				target.style.cursor = hit ? 'pointer' : '';
 			}
-		});
-
-		tileLayer.on('prerender', (evt) => {
-			if (!isDarkTheme($theme)) {
-				return;
-			}
-			if (evt.context) {
-				const context = evt.context as CanvasRenderingContext2D;
-				context.filter = 'grayscale(0%) invert(100%) ';
-				context.globalCompositeOperation = 'source-over';
-			}
-		});
-
-		tileLayer.on('postrender', (evt) => {
-			if (!isDarkTheme($theme)) {
-				return;
-			}
-			if (evt.context) {
-				const context = evt.context as CanvasRenderingContext2D;
-				context.filter = 'none';
-			}
-		});
-
-		theme.subscribe(() => {
-			map?.getLayers().forEach(layer => {
-				layer.changed();
-			});
 		});
 
 		return {
