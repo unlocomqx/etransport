@@ -114,7 +114,7 @@
 				anchorXUnits: 'fraction',
 				anchorYUnits: 'fraction',
 				src: icon,
-				scale: 1
+				scale: .5
 			}),
 			text: new Text({
 				text: group.count.toString(),
