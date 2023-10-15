@@ -96,7 +96,7 @@
 	{#if $prompt && $interacted}
 		<div class='fixed bottom-0 left-0 w-full bg-neutral p-4 flex items-center gap-4' transition:fade>
 			<span class='flex-1'></span>
-			<button class='btn btn-secondary self-end' on:click={install}>
+			<button class='btn btn-primary self-end' on:click={install}>
 				<Icon class='text-2xl' icon='ic:round-install-mobile' />
 				<span>Install App</span>
 			</button>
