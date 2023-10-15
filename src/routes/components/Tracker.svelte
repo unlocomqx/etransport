@@ -121,7 +121,7 @@
 <div class='text-center'>
 	<button class='btn h-auto relative' class:btn-success={state === "tracking"} on:click={track}>
 		<span class='flex flex-col items-center text-lg gap-2 p-4'>
-			<Icon class='text-4xl' icon='basil:location-solid' />
+			<Icon class='text-5xl' icon='basil:location-solid' />
 			<span>Track my location</span>
 		</span>
 	</button>

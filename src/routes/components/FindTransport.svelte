@@ -45,7 +45,7 @@
 	<button class='btn btn-primary h-auto relative overflow-hidden' disabled={state !== "idle"}
 					on:click={start}>
 		<span class='flex flex-col items-center text-lg gap-2 p-4'>
-			<Icon class='text-4xl' icon='ri:scan-2-fill' />
+			<Icon class='text-5xl' icon='ri:scan-2-fill' />
 			<span>Find transport</span>
 		</span>
 		{#if state === "loading"}
