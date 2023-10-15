@@ -133,10 +133,16 @@
 				<Icon class='text-2xl' icon='noto:train' />
 				<span>Train</span>
 			</button>
-			<button class='btn btn-error btn-lg join-item' on:click={stopTracking}>
+			<button class='btn btn-error btn-lg join-item hidden md:flex' on:click={stopTracking}>
 				<Icon icon='mdi:stop' class='text-2xl' />
 				<span>Stop</span>
 			</button>
 		</div>
+	</div>
+	<div class='flex justify-center'>
+		<button class='btn btn-error btn-lg join-item flex md:hidden' on:click={stopTracking}>
+			<Icon icon='mdi:stop' class='text-2xl' />
+			<span>Stop</span>
+		</button>
 	</div>
 {/if}
