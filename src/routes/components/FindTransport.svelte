@@ -47,6 +47,7 @@
 		<span class='flex flex-col items-center text-lg gap-2 p-4'>
 			<Icon class='text-5xl' icon='ri:scan-2-fill' />
 			<span>Find transport</span>
+			<span class='text-xs text-primary-content/70'>Find nearby buses and trains</span>
 		</span>
 		{#if state === "loading"}
 			<Loading />
