@@ -10,9 +10,9 @@
 
 <button
 	class='border-base-content/20 hover:border-base-content/40 overflow-hidden rounded-lg border outline outline-2 outline-offset-2 outline-transparent'
-	class:!outline-secondary-focus={$themeStore == theme}
+	class:!outline-secondary-focus={$themeStore === theme}
 	on:click={setTheme}>
-	<div class='bg-base-100 text-base-content w-full cursor-pointer font-sans' data-theme='{theme}'>
+	<span class='bg-base-100 text-base-content w-full cursor-pointer font-sans' data-theme='{theme}'>
 		<div class='grid grid-cols-5 grid-rows-3'>
 			<div class='bg-base-200 col-start-1 row-span-2 row-start-1'></div>
 			<div class='bg-base-300 col-start-1 row-start-3'></div>
@@ -34,5 +34,5 @@
 				</div>
 			</div>
 		</div>
-	</div>
+	</span>
 </button>

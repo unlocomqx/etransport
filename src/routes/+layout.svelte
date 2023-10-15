@@ -1,4 +1,4 @@
-<script lang='ts' xmlns:svelte='http://www.w3.org/1999/html'>
+<script lang='ts'>
 	import '../app.css';
 	import { getFlash } from 'sveltekit-flash-message/client';
 	import { page } from '$app/stores';
