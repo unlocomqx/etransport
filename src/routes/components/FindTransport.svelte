@@ -4,7 +4,7 @@
 	import { toast } from 'svelte-sonner';
 	import type { TrackerComponent } from './types';
 	import { goto } from '$app/navigation';
-	import { interacted } from '$lib/stores/interacted';
+	import { setInteracted } from '$lib/stores/interacted';
 
 	export let tracker: TrackerComponent;
 
@@ -12,7 +12,7 @@
 	let coords: GeolocationCoordinates | null = null;
 
 	async function start() {
-		interacted.set(true);
+		setInteracted();
 		tracker.stopTracking();
 		const perm = await navigator.permissions.query({ name: 'geolocation' });
 
