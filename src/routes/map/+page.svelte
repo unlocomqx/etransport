@@ -18,11 +18,13 @@
 
 	let state = 'idle';
 
-	async function update() {
+	async function update(context = 'click') {
 		const perm = await navigator.permissions.query({ name: 'geolocation' });
 
 		if (perm.state === 'denied') {
-			toast.error('Geolocation for this site is disabled. Please enable it in your browser settings.');
+			if (context === 'click') {
+				toast.error('Geolocation for this site is disabled. Please enable it in your browser settings.');
+			}
 			return;
 		}
 
@@ -38,7 +40,9 @@
 				goto(`/map?latitude=${latitude}&longitude=${longitude}`, { invalidateAll: true });
 			},
 			(err) => {
-				toast.error('Failed to get your location.');
+				if (context === 'click') {
+					toast.error('Failed to get your location.');
+				}
 				console.error(err);
 				state = 'idle';
 			},
@@ -51,7 +55,7 @@
 
 	onMount(() => {
 		const interval = setInterval(() => {
-			update();
+			update('refresh');
 		}, 3000);
 
 		return () => {

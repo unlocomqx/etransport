@@ -52,7 +52,6 @@
 			if (!isDarkTheme($theme)) {
 				return;
 			}
-			// return
 			if (evt.context) {
 				const context = evt.context as CanvasRenderingContext2D;
 				context.filter = 'grayscale(0%) invert(100%) ';
