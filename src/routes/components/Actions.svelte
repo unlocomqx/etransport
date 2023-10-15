@@ -11,10 +11,10 @@
 		<div class='flex flex-col gap-2 flex-wrap'>
 			<FindTransport {tracker} />
 			<Tracker bind:this={tracker} />
-			<p class='text-center text-gray-500'>
+			<p class='text-center text-base-content/50'>
 				Find and share bus and train locations in real-time.
 			</p>
-			<div class='text-center text-gray-500'>(Currently in beta)</div>
+			<div class='text-center text-base-content/50'>(Currently in beta)</div>
 		</div>
 	</div>
 </div>
