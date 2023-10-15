@@ -177,7 +177,7 @@
 		 data-cy-mode='{group.mode}'
 ></div>
 
-<div bind:this={popover} class='text-center p-4 rounded w-fit max-w-md bg-white opacity-0 transition-opacity'>
+<div bind:this={popover} class='text-center p-4 rounded w-fit max-w-md bg-neutral opacity-0 transition-opacity'>
 	<form method='post' use:enhance={formToaster()}>
 		{#each group.ids as id}
 			<input name='ids[]' type='hidden' value='{id}'>
