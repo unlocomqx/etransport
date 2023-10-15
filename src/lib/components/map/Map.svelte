@@ -3,10 +3,11 @@
 	import Point from 'ol/geom/Point';
 	import { fromLonLat } from 'ol/proj';
 	import TileLayer from 'ol/layer/Tile';
-	import XYZ from 'ol/source/XYZ';
 	import View from 'ol/View';
 	import { setContext } from 'svelte';
 	import type { Coords } from '$lib/types';
+	import { OSM } from 'ol/source';
+	import { isDarkTheme, theme } from '$lib/stores/theme';
 
 	export let center: Coords = { latitude: 0, longitude: 0 };
 
@@ -22,14 +23,13 @@
 
 	function initMap(div: HTMLDivElement) {
 		const point = new Point(fromLonLat([ longitude, latitude ]));
+		const tileLayer = new TileLayer({
+			source: new OSM()
+		});
 		map = new Map({
 			target: div,
 			layers: [
-				new TileLayer({
-					source: new XYZ({
-						url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png'
-					})
-				})
+				tileLayer
 			],
 			view: new View({
 				center: point.getCoordinates(),
@@ -46,6 +46,34 @@
 			if (target instanceof HTMLElement) {
 				target.style.cursor = hit ? 'pointer' : '';
 			}
+		});
+
+		tileLayer.on('prerender', (evt) => {
+			if (!isDarkTheme($theme)) {
+				return;
+			}
+			// return
+			if (evt.context) {
+				const context = evt.context as CanvasRenderingContext2D;
+				context.filter = 'grayscale(80%) invert(100%) ';
+				context.globalCompositeOperation = 'source-over';
+			}
+		});
+
+		tileLayer.on('postrender', (evt) => {
+			if (!isDarkTheme($theme)) {
+				return;
+			}
+			if (evt.context) {
+				const context = evt.context as CanvasRenderingContext2D;
+				context.filter = 'none';
+			}
+		});
+
+		theme.subscribe(() => {
+			map?.getLayers().forEach(layer => {
+				layer.changed();
+			});
 		});
 
 		return {

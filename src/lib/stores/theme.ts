@@ -12,3 +12,11 @@ if (browser) {
 }
 
 export const theme = persistCookie(writable(prefersDark ? 'dark' : 'light'), 'theme');
+
+const light_themes = ['light', 'lemonade'];
+const dark_themes = ['dark', 'dracula', 'night'];
+export const themes = [...light_themes, ...dark_themes];
+
+export function isDarkTheme(theme: string) {
+	return dark_themes.includes(theme);
+}

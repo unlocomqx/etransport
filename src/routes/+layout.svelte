@@ -9,7 +9,7 @@
 	import { onMount } from 'svelte';
 	import type { LayoutData } from './$types';
 	import ThemeBtn from './components/ThemeBtn.svelte';
-	import { theme } from '$lib/stores/theme';
+	import { theme, themes } from '$lib/stores/theme';
 
 	export let data: LayoutData;
 
@@ -32,7 +32,6 @@
 		return () => data.subscription.unsubscribe();
 	});
 
-	let themes = [ 'light', 'lemonade', 'dark', 'dracula', 'night' ];
 	onMount(() => {
 		return theme.subscribe((current_theme) => {
 			document.documentElement.dataset.theme = current_theme;
