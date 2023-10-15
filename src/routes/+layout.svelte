@@ -46,7 +46,7 @@
 	<div class='navbar bg-base-100 gap-2'>
 		<div class='flex-1'>
 			<a class='btn btn-ghost normal-case text-xl' href='/'>
-				<img alt='Logo' src='/steering.svg' width='32'>
+				<img alt='Logo' src='/logo.svg' width='32'>
 				<span>eTransport</span>
 			</a>
 		</div>
