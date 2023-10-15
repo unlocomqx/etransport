@@ -44,17 +44,9 @@
 
 <div>
 	<div class='navbar bg-base-100 gap-2'>
-		<div class='flex-none'>
-			<button class='btn btn-square btn-ghost'>
-				<svg class='inline-block w-5 h-5 stroke-current' fill='none' viewBox='0 0 24 24'
-						 xmlns='http://www.w3.org/2000/svg'>
-					<path d='M4 6h16M4 12h16M4 18h16' stroke-linecap='round' stroke-linejoin='round' stroke-width='2'></path>
-				</svg>
-			</button>
-		</div>
 		<div class='flex-1'>
 			<a class='btn btn-ghost normal-case text-xl' href='/'>
-				<Icon class='text-2xl' icon='fa-solid:bus' />
+				<img alt='Logo' src='/steering.svg' width='32'>
 				<span>eTransport</span>
 			</a>
 		</div>
