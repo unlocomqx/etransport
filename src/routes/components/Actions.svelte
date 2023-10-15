@@ -6,7 +6,7 @@
 	let tracker: TrackerComponent;
 </script>
 
-<div class='card bordered'>
+<div class='card bordered bg-neutral bg-opacity-50'>
 	<div class='card-body'>
 		<div class='flex flex-col gap-2 flex-wrap'>
 			<FindTransport {tracker} />
