@@ -17,7 +17,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 	event.locals.user = session?.user;
 
 	const cookie = event.cookies.get('theme');
-	const theme = JSON.parse(cookie || '"light"');
+	const theme = JSON.parse(cookie || '"dark"');
 
 	return resolve(event, {
 		filterSerializedResponseHeaders(name) {
