@@ -48,7 +48,6 @@
 			<a class='btn btn-ghost normal-case text-xl' href='/'>
 				<img alt='Logo' src='/logo.svg' width='32'>
 				<span>eTransport</span>
-				<span class='text-gray-500 text-xs'>(Beta)</span>
 			</a>
 		</div>
 		<div class='dropdown dropdown-end'>
