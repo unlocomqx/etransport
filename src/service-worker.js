@@ -76,18 +76,3 @@ self.addEventListener('fetch', (event) => {
 
 	event.respondWith(respond());
 });
-
-self.addEventListener('message', async (event) => {
-	const { type, designs } = event.data;
-	if (type === 'check-cache') {
-		const cache = await caches.open(CACHE);
-		const cached = await Promise.all(
-			designs.map(({ id, url }) => cache.match(url).then((response) => (response ? id : null)))
-		);
-		event.source.postMessage({
-			type: 'cache-checked',
-			cached,
-			all_cached: cached.every((id) => id !== null)
-		});
-	}
-});
