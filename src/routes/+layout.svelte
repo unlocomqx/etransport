@@ -100,7 +100,7 @@
 				<Icon class='text-2xl' icon='ic:round-install-mobile' />
 				<span>Install App</span>
 			</button>
-			<button class='btn' on:click={install} on:click={() => prompt.set(null)}>
+			<button class='btn' on:click={() => prompt.set(null)}>
 				<Icon class='text-2xl' icon='mdi:close' />
 			</button>
 		</div>
