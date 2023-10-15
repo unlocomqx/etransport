@@ -10,6 +10,7 @@
 	import type { LayoutData } from './$types';
 	import ThemeBtn from './components/ThemeBtn.svelte';
 	import { theme, themes } from '$lib/stores/theme';
+	import { install, prompt } from '$lib/pwa';
 
 	export let data: LayoutData;
 
@@ -50,7 +51,10 @@
 			</button>
 		</div>
 		<div class='flex-1'>
-			<a class='btn btn-ghost normal-case text-xl' href='/'>eTransport</a>
+			<a class='btn btn-ghost normal-case text-xl' href='/'>
+				<Icon class='text-2xl' icon='fa-solid:bus' />
+				<span>eTransport</span>
+			</a>
 		</div>
 		<div class='dropdown dropdown-end'>
 			<button class='btn btn-circle'>
@@ -94,6 +98,15 @@
 		<Flash {flash} />
 		<slot />
 	</div>
+
+	{#if $prompt}
+		<div class='fixed bottom-0 left-0 w-full bg-neutral p-4 flex justify-end'>
+			<button class='btn btn-secondary' on:click={install}>
+				<Icon class='text-2xl' icon='ic:round-install-mobile' />
+				<span>Install App</span>
+			</button>
+		</div>
+	{/if}
 
 	{#if loaded}
 		<span class='hidden' data-cy='loaded'></span>
