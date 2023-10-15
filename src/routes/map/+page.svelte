@@ -30,7 +30,9 @@
 
 		// console.log("update");
 
-		state = 'loading';
+		if (context === 'click') {
+			state = 'loading';
+		}
 		navigator.geolocation.getCurrentPosition(
 			(position) => {
 				// console.log(position, position.coords.latitude, position.coords.longitude);
