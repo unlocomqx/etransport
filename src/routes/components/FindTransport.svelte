@@ -33,7 +33,6 @@
 				state = 'idle';
 			},
 			{
-				timeout: 5000,
 				maximumAge: 0
 			}
 		);
