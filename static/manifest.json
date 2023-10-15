@@ -12,6 +12,6 @@
   "background_color": "#060522",
   "display": "standalone",
   "scope": "/",
-  "theme_color": "#B41828",
+  "theme_color": "#060522",
   "description": "Check buses and trains online"
 }
