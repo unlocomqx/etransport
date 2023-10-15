@@ -101,7 +101,7 @@
 		<slot />
 	</div>
 
-	{#if ($prompt && $interacted) || true}
+	{#if $prompt && $interacted}
 		<div class='fixed bottom-0 left-0 w-full bg-neutral p-4 flex items-center gap-4' transition:fade>
 			<span class='flex-1'></span>
 			<button class='btn btn-secondary self-end' on:click={install}>
