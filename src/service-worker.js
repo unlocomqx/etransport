@@ -4,9 +4,9 @@ import { build, files, version } from '$service-worker'; // Create a unique cach
 // Create a unique cache name for this deployment
 const CACHE = `cache-${version}`;
 
-const excluded = ['tifos', 'setup'];
-const excluded_folders = ['setup'];
-const cacheable = ['api/download'];
+const excluded = [];
+const excluded_folders = [];
+const cacheable = [];
 
 const ASSETS = [
 	...build, // the app itself
