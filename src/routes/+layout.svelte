@@ -110,3 +110,29 @@
 		<span class='hidden' data-cy='loaded'></span>
 	{/if}
 </div>
+
+<div class='bg'>
+	<img alt='Background' src='/logo.svg'>
+</div>
+
+<style>
+  .bg {
+    z-index: -1;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    filter: saturate(0%);
+    opacity: .1;
+  }
+
+  .bg img {
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 300%;
+    translate: 50%;
+    max-width: unset;
+  }
+</style>
