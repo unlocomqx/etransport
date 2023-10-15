@@ -119,9 +119,11 @@
 </script>
 
 <div class='text-center'>
-	<button class='btn btn-lg relative' class:btn-success={state === "tracking"} on:click={track}>
-		<Icon class='text-2xl' icon='basil:location-solid' />
-		<span>Track my location</span>
+	<button class='btn h-auto relative' class:btn-success={state === "tracking"} on:click={track}>
+		<span class='flex flex-col items-center text-lg gap-2 p-4'>
+			<Icon class='text-4xl' icon='basil:location-solid' />
+			<span>Track my location</span>
+		</span>
 	</button>
 </div>
 {#if state !== "idle"}
