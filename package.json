@@ -13,6 +13,7 @@
     "lint": "prettier --plugin-search-dir . --check . && eslint .",
     "format": "prettier --plugin-search-dir . --write .",
     "migrate": "drizzle-kit generate:pg",
+    "migrate:up": "node ./scripts/migrate.js",
     "cy-open": "WATCH=true cypress open --e2e --env WATCH=1 | grep -v GET",
     "cy-run": "WATCH=true cypress run --e2e --browser chrome --env WATCH=1 | grep -v GET",
     "start-dev": "TEST=true env-cmd -f .env.test npm run migrate && env-cmd -f .env.test bun scripts/migrate.ts && npm run dev",
