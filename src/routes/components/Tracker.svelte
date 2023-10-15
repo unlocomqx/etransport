@@ -5,12 +5,15 @@
 	import type { Session } from '@supabase/supabase-js';
 	import { onDestroy } from 'svelte';
 	import { mode } from '$lib/stores/mode';
+	import { interacted } from '$lib/stores/interacted';
 
 	let tracking_id: number;
 	let last_timestamp: number;
 	let state = 'idle';
 
 	async function track() {
+		interacted.set(true);
+
 		if (state === 'tracking') {
 			toast.info('Already tracking location.');
 			return;

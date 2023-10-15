@@ -18,9 +18,7 @@ if (browser) {
 export async function install() {
 	const p = get(prompt);
 	if (p instanceof Event) {
-		const prompt_result = p.prompt();
-		console.log({ prompt_result });
-
+		p.prompt();
 		const { outcome } = await p.userChoice;
 		prompt.set(null);
 

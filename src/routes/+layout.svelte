@@ -11,6 +11,8 @@
 	import ThemeBtn from './components/ThemeBtn.svelte';
 	import { theme, themes } from '$lib/stores/theme';
 	import { install, prompt } from '$lib/pwa';
+	import { interacted } from '$lib/stores/interacted';
+	import { fade } from 'svelte/transition';
 
 	export let data: LayoutData;
 
@@ -99,8 +101,8 @@
 		<slot />
 	</div>
 
-	{#if $prompt}
-		<div class='fixed bottom-0 left-0 w-full bg-neutral p-4 flex justify-end'>
+	{#if $prompt && $interacted}
+		<div class='fixed bottom-0 left-0 w-full bg-neutral p-4 flex justify-end' transition:fade>
 			<button class='btn btn-secondary' on:click={install}>
 				<Icon class='text-2xl' icon='ic:round-install-mobile' />
 				<span>Install App</span>
