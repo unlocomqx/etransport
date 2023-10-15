@@ -45,7 +45,7 @@
 <div>
 	<div class='navbar bg-base-100 gap-2'>
 		<div class='flex-1'>
-			<a class='btn btn-ghost normal-case text-xl' href='/'>
+			<a class='btn btn-ghost normal-case text-xl' data-sveltekit-reload href='/'>
 				<img alt='Logo' src='/logo.svg' width='32'>
 				<span>eTransport</span>
 			</a>
