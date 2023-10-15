@@ -13,6 +13,7 @@
 	import { install, prompt } from '$lib/pwa';
 	import { interacted } from '$lib/stores/interacted';
 	import { fade } from 'svelte/transition';
+	import Analytics from './components/Analytics.svelte';
 
 	export let data: LayoutData;
 
@@ -114,6 +115,8 @@
 <div class='bg'>
 	<img alt='Background' src='/logo.svg'>
 </div>
+
+<Analytics />
 
 <style>
   .bg {
