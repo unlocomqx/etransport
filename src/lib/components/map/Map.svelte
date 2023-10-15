@@ -55,7 +55,7 @@
 			// return
 			if (evt.context) {
 				const context = evt.context as CanvasRenderingContext2D;
-				context.filter = 'grayscale(80%) invert(100%) ';
+				context.filter = 'grayscale(0%) invert(100%) ';
 				context.globalCompositeOperation = 'source-over';
 			}
 		});
