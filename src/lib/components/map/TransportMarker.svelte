@@ -145,8 +145,10 @@
 		iconFeature?.setStyle(getStyle());
 	}
 
-	$: console.log($theme);
-	$: updatePopup(popover), $theme;
+	$: {
+		$theme;
+		updatePopup(popover);
+	}
 
 	async function updatePopup(popover: HTMLDivElement) {
 		if (!popup) return;
