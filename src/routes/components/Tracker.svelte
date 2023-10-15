@@ -64,7 +64,8 @@
 				state = 'idle';
 			},
 			{
-				maximumAge: 0
+				maximumAge: 0,
+				timeout: 10000
 			}
 		);
 	}
