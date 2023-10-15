@@ -12,8 +12,9 @@
 			<FindTransport {tracker} />
 			<Tracker bind:this={tracker} />
 			<p class='text-center text-gray-500'>
-				Find and share bus and train locations in real-time. (Currently in beta)
+				Find and share bus and train locations in real-time.
 			</p>
+			<div class='text-center text-gray-500'>(Currently in beta)</div>
 		</div>
 	</div>
 </div>

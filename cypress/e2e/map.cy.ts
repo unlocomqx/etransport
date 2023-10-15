@@ -64,7 +64,7 @@ describe('Map', () => {
 			.get(`[data-cy=update-position]`).click();
 	});
 
-	it('display count', () => {
+	it.only('display count', () => {
 		cy
 			.task('seed', { spec: 'locations' })
 			.task('updateLocation', {
@@ -131,7 +131,7 @@ describe('Map', () => {
 			.get(`[data-cy=upvote-btn]:visible`).click();
 	});
 
-	it.only('display only last location from user', () => {
+	it('display only last location from user', () => {
 		cy
 			.task('seed', { spec: 'user-locations' })
 			.task('updateLocation', {
