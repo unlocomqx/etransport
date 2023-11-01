@@ -9,6 +9,7 @@
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import type { GeoGroup } from '$lib/utils/geo';
+	import { fade } from 'svelte/transition';
 
 	let state = 'idle';
 	let groups: GeoGroup[] = [];
@@ -87,4 +88,13 @@
 			<Icon class='text-2xl' icon='mdi:arrow-left' />
 		</button>
 	</Map>
+{/if}
+
+{#if state === 'loading'}
+	<div class='p-4' transition:fade>
+		<div class='alert alert-info'>
+			<span class='loading loading-spinner loading-lg'></span>
+			<span>Loading your position, please wait...</span>
+		</div>
+	</div>
 {/if}
