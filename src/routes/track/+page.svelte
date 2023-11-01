@@ -1,5 +1,4 @@
 <script lang='ts'>
-	import type { PageData } from './$types';
 	import 'ol/ol.css';
 	import Icon from '@iconify/svelte';
 	import { toast } from 'svelte-sonner';
@@ -12,12 +11,11 @@
 	import CenterMarker from '$lib/components/map/CenterMarker.svelte';
 	import Map from '$lib/components/map/Map.svelte';
 	import { goto } from '$app/navigation';
+	import type { GeoGroup } from '$lib/utils/geo';
 
-	export let data: PageData;
-
-	let { latitude, longitude } = data;
-
-	$: groups = data.groups;
+	let latitude: number;
+	let longitude: number;
+	let groups: GeoGroup[] = [];
 
 	let tracking_id: number;
 	let last_timestamp: number;
@@ -83,7 +81,6 @@
 			(err) => {
 				console.error(err);
 				toast.error('Location tracking failed.');
-				goto('/');
 				state = 'idle';
 			},
 			{

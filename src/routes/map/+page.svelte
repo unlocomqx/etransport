@@ -1,5 +1,4 @@
 <script lang='ts'>
-	import type { PageData } from './$types';
 	import 'ol/ol.css';
 	import Map from '$lib/components/map/Map.svelte';
 	import CenterMarker from '$lib/components/map/CenterMarker.svelte';
@@ -9,22 +8,19 @@
 	import Loading from '$lib/components/Loading.svelte';
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
-
-	export let data: PageData;
-
-	let { latitude, longitude } = data;
-
-	$: groups = data.groups;
+	import type { GeoGroup } from '$lib/utils/geo';
 
 	let state = 'idle';
+	let groups: GeoGroup[] = [];
+	let latitude: number;
+	let longitude: number;
 
 	async function update(context = 'click') {
 		const perm = await navigator.permissions.query({ name: 'geolocation' });
 
 		if (perm.state === 'denied') {
-			if (context === 'click') {
-				toast.error('Geolocation for this site is disabled. Please enable it in your browser settings.');
-			}
+			toast.error('Geolocation for this site is disabled. Please enable it in your browser settings.');
+			await goto('/');
 			return;
 		}
 
@@ -32,15 +28,24 @@
 			state = 'loading';
 		}
 		navigator.geolocation.getCurrentPosition(
-			(position) => {
+			async (position) => {
 				latitude = position.coords.latitude;
 				longitude = position.coords.longitude;
 				state = 'idle';
-				goto(`/map?latitude=${latitude}&longitude=${longitude}`, { invalidateAll: true });
+				const url = new URL('/api/markers', window.location.origin);
+				url.searchParams.set('latitude', position.coords.latitude.toString());
+				url.searchParams.set('longitude', position.coords.longitude.toString());
+				const groups_data = await fetch(url, {
+					headers: {
+						'Content-Type': 'application/json'
+					}
+				}).then((res) => res.json());
+				groups = groups_data.groups;
 			},
 			(err) => {
 				if (context === 'click') {
 					toast.error('Failed to get your location.');
+					goto('/');
 				}
 				console.error(err);
 				state = 'idle';
@@ -52,6 +57,8 @@
 	}
 
 	onMount(() => {
+		update('click');
+
 		const interval = setInterval(() => {
 			update('refresh');
 		}, 3000);
@@ -62,20 +69,22 @@
 	});
 </script>
 
-<Map center={{latitude, longitude}}>
-	<CenterMarker coords={{latitude, longitude}} />
-	{#each groups as group (group.id)}
-		<TransportMarker {group} />
-	{/each}
-	<button class='btn btn-circle btn-secondary fixed bottom-4 right-4 z-10 overflow-hidden' data-cy='update-position'
-					on:click={() => update()}>
-		<Icon class='text-2xl' icon='mdi:my-location' />
-		{#if state === "loading"}
-			<Loading />
-		{/if}
-	</button>
-	<button class='btn btn-circle btn-secondary fixed bottom-4 left-4 z-10 overflow-hidden'
-					on:click={() => goto('/')}>
-		<Icon class='text-2xl' icon='mdi:arrow-left' />
-	</button>
-</Map>
+{#if latitude && longitude}
+	<Map center={{latitude, longitude}}>
+		<CenterMarker coords={{latitude, longitude}} />
+		{#each groups as group (group.id)}
+			<TransportMarker {group} />
+		{/each}
+		<button class='btn btn-circle btn-secondary fixed bottom-4 right-4 z-10 overflow-hidden' data-cy='update-position'
+						on:click={() => update()}>
+			<Icon class='text-2xl' icon='mdi:my-location' />
+			{#if state === "loading"}
+				<Loading />
+			{/if}
+		</button>
+		<button class='btn btn-circle btn-secondary fixed bottom-4 left-4 z-10 overflow-hidden'
+						on:click={() => goto('/')}>
+			<Icon class='text-2xl' icon='mdi:arrow-left' />
+		</button>
+	</Map>
+{/if}
