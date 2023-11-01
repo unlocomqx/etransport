@@ -28,14 +28,11 @@
 			return;
 		}
 
-		console.log('update');
-
 		if (context === 'click') {
 			state = 'loading';
 		}
 		navigator.geolocation.getCurrentPosition(
 			(position) => {
-				// console.log(position, position.coords.latitude, position.coords.longitude);
 				latitude = position.coords.latitude;
 				longitude = position.coords.longitude;
 				state = 'idle';
@@ -68,16 +65,16 @@
 <Map center={{latitude, longitude}}>
 	<CenterMarker coords={{latitude, longitude}} />
 	{#each groups as group (group.id)}
-		<TransportMarker group={group} />
+		<TransportMarker {group} />
 	{/each}
 	<button class='btn btn-circle btn-secondary fixed bottom-4 right-4 z-10 overflow-hidden' data-cy='update-position'
-					on:click={update}>
+					on:click={() => update()}>
 		<Icon class='text-2xl' icon='mdi:my-location' />
 		{#if state === "loading"}
 			<Loading />
 		{/if}
 	</button>
-	<button class='btn btn-circle btn-secondary fixed bottom-4 left-4 z-10 overflow-hidden' data-cy='update-position'
+	<button class='btn btn-circle btn-secondary fixed bottom-4 left-4 z-10 overflow-hidden'
 					on:click={() => goto('/')}>
 		<Icon class='text-2xl' icon='mdi:arrow-left' />
 	</button>
