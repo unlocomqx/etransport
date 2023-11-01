@@ -13,6 +13,7 @@
 	import { goto } from '$app/navigation';
 	import type { GeoGroup } from '$lib/utils/geo';
 	import { fade } from 'svelte/transition';
+	import Loading from '$lib/components/Loading.svelte';
 
 	let latitude: number;
 	let longitude: number;
@@ -101,6 +102,8 @@
 
 	onDestroy(stopTracking);
 
+	let mode_state = 'idle';
+
 	async function updateMode(value: string) {
 		mode.set({ value });
 
@@ -109,6 +112,8 @@
 			toast.info('Please login using Google to change your mode of transport.');
 			return;
 		}
+
+		mode_state = 'loading';
 
 		const res = await fetch('/api/mode', {
 			method: 'POST',
@@ -125,6 +130,8 @@
 			console.log(data.errors);
 			toast.warning(data.message || 'The mode could not be saved.', {});
 		}
+
+		mode_state = 'idle';
 
 		if (data.success) {
 			toast.success('Mode updated successfully.');
@@ -143,7 +150,7 @@
 			<TransportMarker {group} />
 		{/each}
 	</Map>
-	<div class='bg-white fixed left-0 bottom-0 z-10 w-full p-2 flex items-center justify-center'>
+	<div class='bg-neutral fixed left-0 bottom-0 z-10 w-full p-2 flex items-center justify-center'>
 		<button class='btn btn-circle btn-secondary self-start'
 						on:click={() => goto('/')}>
 			<Icon class='text-2xl' icon='mdi:arrow-left' />
@@ -151,16 +158,27 @@
 		<span class='flex-1'></span>
 		<div class='join'>
 			<div class='join'>
-				<button class='btn join-item' class:btn-success={$mode.value === "bus"}
+				<button class='relative btn btn-outline join-item'
+								class:btn-success={$mode.value === "bus"}
+								class:btn-active={$mode.value === "bus"}
+								disabled={mode_state === 'loading'}
 								on:click={() => updateMode("bus")}>
 					<Icon class='text-2xl' icon='noto:oncoming-bus' />
 					<span>Bus</span>
+					{#if mode_state === 'loading' && $mode.value === 'bus'}
+						<Loading />
+					{/if}
 				</button>
-				<button class='btn join-item'
+				<button class='relative btn btn-outline join-item'
 								class:btn-success={$mode.value === "train"}
+								class:btn-active={$mode.value === "train"}
+								disabled={mode_state === 'loading'}
 								on:click={() => updateMode("train")}>
 					<Icon class='text-2xl' icon='noto:train' />
 					<span>Train</span>
+					{#if mode_state === 'loading' && $mode.value === 'train'}
+						<Loading />
+					{/if}
 				</button>
 				<a class='btn btn-error join-item' href='/'>
 					<Icon icon='mdi:stop' class='text-2xl' />
