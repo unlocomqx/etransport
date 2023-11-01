@@ -64,7 +64,7 @@ describe('Map', () => {
 			.get(`[data-cy=update-position]`).click();
 	});
 
-	it.only('display count', () => {
+	it('display count', () => {
 		cy
 			.task('seed', { spec: 'locations' })
 			.task('updateLocation', {
@@ -137,14 +137,14 @@ describe('Map', () => {
 			.task('updateLocation', {
 				id: '1',
 				location: {
-					timestamp: (new Date(Date.now() - 12000)).toISOString()
+					timestamp: (new Date(Date.now() - 10000)).toISOString()
 				}
 			})
 			.task('updateLocation', {
 				id: '2',
 				location: {
 					mode: 'bus',
-					timestamp: (new Date(Date.now() - 10000)).toISOString()
+					timestamp: (new Date(Date.now() - 9000)).toISOString()
 				}
 			})
 			.load('/', {
@@ -167,6 +167,9 @@ describe('Map', () => {
 				timestamp: (new Date(Date.now() - 3000)).toISOString(),
 				mode: 'bus'
 			})
+
+			.wait(1000)
+			.get(`[data-cy=update-position]`).click()
 
 			.get(`[data-cy-id=2]`).should('not.exist')
 			.get(`[data-cy-id=3]`).should('exist');
