@@ -1,35 +1,22 @@
-import type { PageServerLoad } from './$types';
-import type { Actions } from '@sveltejs/kit';
-import { redirect } from 'sveltekit-flash-message/server';
-import { db } from '$lib/db/client';
+import { error, json, type RequestHandler } from '@sveltejs/kit';
 import { locations, users_reputation } from '$lib/schemas/db/schema';
+import { db } from '$lib/db/client';
 import { asc, between, desc, eq } from 'drizzle-orm';
 import { type GeoGroup, getGeoGroups, type UserLocation } from '$lib/utils/geo';
 
-export const actions = {
-	async default(event) {
-		console.log('default', event);
-	}
-} satisfies Actions;
-
-export const load = (async (event) => {
-	const { url } = event;
+export const GET: RequestHandler = async ({ url }) => {
 	const latitude_str = url.searchParams.get('latitude');
 	const longitude_str = url.searchParams.get('longitude');
 
 	if (!latitude_str || !longitude_str) {
-		return {
-			latitude: null,
-			longitude: null,
-			groups: []
-		};
+		throw error(400, 'Invalid location');
 	}
 
 	const latitude = parseFloat(latitude_str);
 	const longitude = parseFloat(longitude_str);
 
 	if (isNaN(latitude) || isNaN(longitude)) {
-		throw redirect('/', { type: 'error', message: 'Invalid location' }, event);
+		throw error(400, 'Invalid location');
 	}
 
 	let groups: GeoGroup[] = [];
@@ -52,12 +39,10 @@ export const load = (async (event) => {
 		groups = getGeoGroups(recent_locations as UserLocation[], { latitude, longitude });
 	} catch (e) {
 		console.error(e);
-		throw redirect('/', { type: 'error', message: 'Could not fetch location data' }, event);
+		throw error(500, 'Could not fetch location data');
 	}
 
-	return {
-		latitude,
-		longitude,
+	return json({
 		groups
-	};
-}) satisfies PageServerLoad;
+	});
+};

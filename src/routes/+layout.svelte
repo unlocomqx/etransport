@@ -89,7 +89,7 @@
 	</div>
 
 	<div>
-		<Toaster position='bottom-right' richColors />
+		<Toaster closeButton position='top-center' richColors />
 		<Flash {flash} />
 		<slot />
 	</div>

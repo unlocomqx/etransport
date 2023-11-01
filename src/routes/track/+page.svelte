@@ -1,13 +1,16 @@
 <script lang='ts'>
 	import type { PageData } from './$types';
 	import 'ol/ol.css';
-	import Map from '$lib/components/map/Map.svelte';
-	import CenterMarker from '$lib/components/map/CenterMarker.svelte';
-	import TransportMarker from '$lib/components/map/TransportMarker.svelte';
 	import Icon from '@iconify/svelte';
 	import { toast } from 'svelte-sonner';
-	import Loading from '$lib/components/Loading.svelte';
-	import { onMount } from 'svelte';
+	import { page } from '$app/stores';
+	import type { Session } from '@supabase/supabase-js';
+	import { onDestroy, onMount } from 'svelte';
+	import { mode } from '$lib/stores/mode';
+	import { setInteracted } from '$lib/stores/interacted';
+	import TransportMarker from '$lib/components/map/TransportMarker.svelte';
+	import CenterMarker from '$lib/components/map/CenterMarker.svelte';
+	import Map from '$lib/components/map/Map.svelte';
 	import { goto } from '$app/navigation';
 
 	export let data: PageData;
@@ -16,66 +19,160 @@
 
 	$: groups = data.groups;
 
+	let tracking_id: number;
+	let last_timestamp: number;
 	let state = 'idle';
 
-	async function update(context = 'click') {
-		const perm = await navigator.permissions.query({ name: 'geolocation' });
+	async function track() {
+		setInteracted();
 
-		if (perm.state === 'denied') {
-			if (context === 'click') {
-				toast.error('Geolocation for this site is disabled. Please enable it in your browser settings.');
-			}
+		if (state === 'tracking') {
+			toast.info('Already tracking location.');
 			return;
 		}
 
-		if (context === 'click') {
-			state = 'loading';
+		const perm = await navigator.permissions.query({ name: 'geolocation' });
+
+		if (perm.state === 'denied') {
+			toast.error('Geolocation for this site is disabled. Please enable it in your browser settings.');
+			goto('/');
+			return;
 		}
-		navigator.geolocation.getCurrentPosition(
-			(position) => {
+
+		state = 'tracking';
+		last_timestamp = 0;
+		tracking_id = navigator.geolocation.watchPosition(
+			async (position) => {
 				latitude = position.coords.latitude;
 				longitude = position.coords.longitude;
-				state = 'idle';
-				goto(`/map?latitude=${latitude}&longitude=${longitude}`, { invalidateAll: true });
+				// console.log(position, position.coords.latitude, position.coords.longitude);
+				if (position.timestamp - last_timestamp < 10000) {
+					console.log('Skipping location update, too soon.');
+					return;
+				}
+				last_timestamp = position.timestamp;
+				const data = await fetch('/api/location', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({
+						latitude: position.coords.latitude,
+						longitude: position.coords.longitude,
+						timestamp: new Date(position.timestamp).toUTCString(),
+						mode: $mode.value
+					})
+				}).then((res) => res.json());
+
+				if (data.error) {
+					console.log(data.errors);
+					toast.warning(data.message || 'The tracking data could not be saved.');
+				}
+				if (data.success) {
+					const url = new URL('/api/markers', window.location.origin);
+					url.searchParams.set('latitude', position.coords.latitude.toString());
+					url.searchParams.set('longitude', position.coords.longitude.toString());
+					const groups_data = await fetch(url, {
+						headers: {
+							'Content-Type': 'application/json'
+						}
+					}).then((res) => res.json());
+					groups = groups_data.groups;
+				}
 			},
 			(err) => {
-				if (context === 'click') {
-					toast.error('Failed to get your location.');
-				}
 				console.error(err);
+				toast.error('Location tracking failed.');
+				goto('/');
 				state = 'idle';
 			},
 			{
-				maximumAge: 0
+				maximumAge: 0,
+				timeout: 10000
 			}
 		);
 	}
 
-	onMount(() => {
-		const interval = setInterval(() => {
-			update('refresh');
-		}, 3000);
+	export function stopTracking() {
+		try {
+			if (tracking_id) {
+				navigator.geolocation.clearWatch(tracking_id);
+			}
+		} catch (e) {
+			console.log(e);
+		} finally {
+			state = 'idle';
+		}
+	}
 
-		return () => {
-			clearInterval(interval);
-		};
+	onDestroy(stopTracking);
+
+	async function updateMode(value: string) {
+		mode.set({ value });
+
+		const session: Session = $page.data.session;
+		if (!session || !session.user) {
+			toast.info('Please login using Google to change your mode of transport.');
+			return;
+		}
+
+		const res = await fetch('/api/mode', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				mode: $mode.value
+			})
+		});
+
+		const data = await res.json();
+		if (data.error) {
+			console.log(data.errors);
+			toast.warning(data.message || 'The mode could not be saved.', {});
+		}
+
+		if (data.success) {
+			toast.success('Mode updated successfully.');
+		}
+	}
+
+	onMount(() => {
+		track();
 	});
 </script>
 
-<Map center={{latitude, longitude}}>
-	<CenterMarker coords={{latitude, longitude}} />
-	{#each groups as group (group.id)}
-		<TransportMarker {group} />
-	{/each}
-	<button class='btn btn-circle btn-secondary fixed bottom-4 right-4 z-10 overflow-hidden' data-cy='update-position'
-					on:click={() => update()}>
-		<Icon class='text-2xl' icon='mdi:my-location' />
-		{#if state === "loading"}
-			<Loading />
-		{/if}
-	</button>
-	<button class='btn btn-circle btn-secondary fixed bottom-4 left-4 z-10 overflow-hidden'
-					on:click={() => goto('/')}>
-		<Icon class='text-2xl' icon='mdi:arrow-left' />
-	</button>
-</Map>
+{#if latitude && longitude}
+	<Map center={{latitude, longitude}}>
+		<CenterMarker coords={{latitude, longitude}} />
+		{#each groups as group (group.id)}
+			<TransportMarker {group} />
+		{/each}
+	</Map>
+	<div class='bg-white fixed left-0 bottom-0 z-10 w-full p-2 flex items-center justify-center'>
+		<button class='btn btn-circle btn-secondary self-start'
+						on:click={() => goto('/')}>
+			<Icon class='text-2xl' icon='mdi:arrow-left' />
+		</button>
+		<span class='flex-1'></span>
+		<div class='join'>
+			<div class='join'>
+				<button class='btn join-item' class:btn-success={$mode.value === "bus"}
+								on:click={() => updateMode("bus")}>
+					<Icon class='text-2xl' icon='noto:oncoming-bus' />
+					<span>Bus</span>
+				</button>
+				<button class='btn join-item'
+								class:btn-success={$mode.value === "train"}
+								on:click={() => updateMode("train")}>
+					<Icon class='text-2xl' icon='noto:train' />
+					<span>Train</span>
+				</button>
+				<a class='btn btn-error join-item' href='/'>
+					<Icon icon='mdi:stop' class='text-2xl' />
+					<span>Stop</span>
+				</a>
+			</div>
+		</div>
+	</div>
+{/if}

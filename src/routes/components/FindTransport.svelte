@@ -2,18 +2,14 @@
 	import Icon from '@iconify/svelte';
 	import Loading from '$lib/components/Loading.svelte';
 	import { toast } from 'svelte-sonner';
-	import type { TrackerComponent } from './types';
 	import { goto } from '$app/navigation';
 	import { setInteracted } from '$lib/stores/interacted';
-
-	export let tracker: TrackerComponent;
 
 	let state = 'idle';
 	let coords: GeolocationCoordinates | null = null;
 
 	async function start() {
 		setInteracted();
-		tracker.stopTracking();
 		const perm = await navigator.permissions.query({ name: 'geolocation' });
 
 		if (perm.state === 'denied') {
@@ -53,8 +49,4 @@
 			<Loading />
 		{/if}
 	</button>
-	<form action='/map' method='post'>
-		<input name='latitude' type='hidden' value='{coords?.latitude}' />
-		<input name='longitude' type='hidden' value='{coords?.longitude}' />
-	</form>
 </div>
