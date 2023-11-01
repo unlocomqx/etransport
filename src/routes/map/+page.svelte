@@ -94,7 +94,7 @@
 	<div class='p-4' transition:fade>
 		<div class='alert alert-info'>
 			<span class='loading loading-spinner loading-lg'></span>
-			<span>Loading your position, please wait...</span>
+			<span>Reading your position, please wait...</span>
 		</div>
 	</div>
 {/if}

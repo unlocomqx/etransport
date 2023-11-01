@@ -12,6 +12,7 @@
 	import Map from '$lib/components/map/Map.svelte';
 	import { goto } from '$app/navigation';
 	import type { GeoGroup } from '$lib/utils/geo';
+	import { fade } from 'svelte/transition';
 
 	let latitude: number;
 	let longitude: number;
@@ -24,11 +25,6 @@
 	async function track() {
 		setInteracted();
 
-		if (state === 'tracking') {
-			toast.info('Already tracking location.');
-			return;
-		}
-
 		const perm = await navigator.permissions.query({ name: 'geolocation' });
 
 		if (perm.state === 'denied') {
@@ -37,10 +33,11 @@
 			return;
 		}
 
-		state = 'tracking';
+		state = 'loading';
 		last_timestamp = 0;
 		tracking_id = navigator.geolocation.watchPosition(
 			async (position) => {
+				state = 'tracking';
 				latitude = position.coords.latitude;
 				longitude = position.coords.longitude;
 				// console.log(position, position.coords.latitude, position.coords.longitude);
@@ -170,6 +167,15 @@
 					<span>Stop</span>
 				</a>
 			</div>
+		</div>
+	</div>
+{/if}
+
+{#if state === 'loading'}
+	<div class='p-4' transition:fade>
+		<div class='alert alert-info'>
+			<span class='loading loading-spinner loading-lg'></span>
+			<span>Reading your position, please wait...</span>
 		</div>
 	</div>
 {/if}
