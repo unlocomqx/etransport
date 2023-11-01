@@ -6,16 +6,10 @@ describe('Map', () => {
 			.viewport(786, 1024);
 	});
 
-	it('validate location', () => {
-		cy
-			.load('/map')
-			.get('div').contains('Invalid location').should('be.visible');
-	});
-
 	it('display map', () => {
 		cy
 			.task('seedLocations', { count: 20, radius: 1 })
-			.load('/', {
+			.load('/map', {
 				onBeforeLoad({ navigator }) {
 					const latitude = 35.765249;
 					const longitude = 10.809677;
@@ -23,7 +17,6 @@ describe('Map', () => {
 						.callsArgWith(0, { coords: { latitude, longitude } });
 				}
 			})
-			.get('button').contains('Find transport').click()
 			.get(`[data-cy=center-marker]`).should('exist')
 			.get(`[data-cy=transport-marker]`).should('exist')
 			.wait(1000)
@@ -42,7 +35,7 @@ describe('Map', () => {
 	it('update position', () => {
 		cy
 			.task('seedLocations', { count: 40, radius: 2 })
-			.load('/', {
+			.load('/map', {
 				onBeforeLoad({ navigator }) {
 					const origin = [ 35.765249, 10.809677 ] as [ number, number ];
 					cy.stub(navigator.geolocation, 'getCurrentPosition')
@@ -57,7 +50,6 @@ describe('Map', () => {
 						});
 				}
 			})
-			.get('button').contains('Find transport').click()
 			.wait(1000)
 			.get(`[data-cy=update-position]`).click()
 			.wait(1000)
@@ -73,7 +65,7 @@ describe('Map', () => {
 					timestamp: (new Date(Date.now() - 10000)).toISOString()
 				}
 			})
-			.load('/', {
+			.load('/map', {
 				onBeforeLoad({ navigator }) {
 					const latitude = 35.765249;
 					const longitude = 10.809677;
@@ -81,7 +73,6 @@ describe('Map', () => {
 						.callsArgWith(0, { coords: { latitude, longitude } });
 				}
 			})
-			.get('button').contains('Find transport').click()
 			.get(`[data-cy=center-marker]`).should('exist')
 			.get(`[data-cy=transport-marker]`).should('exist')
 			.get(`[data-cy-id=9]`)
@@ -124,7 +115,14 @@ describe('Map', () => {
 				timestamp: (new Date(Date.now() - 10000)).toISOString(),
 				mode: 'bus'
 			})
-			.load('/map?latitude=35.765249&longitude=10.809677')
+			.load('/map', {
+				onBeforeLoad({ navigator }) {
+					const latitude = 35.765249;
+					const longitude = 10.809677;
+					cy.stub(navigator.geolocation, 'getCurrentPosition')
+						.callsArgWith(0, { coords: { latitude, longitude } });
+				}
+			})
 			.wait(1000)
 			.get('.ol-layer').click()
 			.wait(500)
@@ -147,7 +145,7 @@ describe('Map', () => {
 					timestamp: (new Date(Date.now() - 9000)).toISOString()
 				}
 			})
-			.load('/', {
+			.load('/map', {
 				onBeforeLoad({ navigator }) {
 					const latitude = 35.765249;
 					const longitude = 10.809677;
@@ -155,7 +153,6 @@ describe('Map', () => {
 						.callsArgWith(0, { coords: { latitude, longitude } });
 				}
 			})
-			.get('button').contains('Find transport').click()
 			.get(`[data-cy-id=2]`).should('exist')
 			.get(`[data-cy-id=1]`).should('not.exist')
 
