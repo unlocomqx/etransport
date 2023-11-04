@@ -5,7 +5,6 @@ import { createInsertSchema } from 'drizzle-zod';
 import { locations } from '$lib/schemas/db/schema';
 import { db } from '$lib/db/client';
 import { and, desc, eq, notBetween, sql } from 'drizzle-orm';
-import { getDistance } from 'geolib';
 
 export const POST: RequestHandler = async ({ request, locals: { session } }) => {
 	if (!session) {
@@ -44,23 +43,9 @@ export const POST: RequestHandler = async ({ request, locals: { session } }) => 
 		let can_add = true;
 
 		if (lastLocation) {
-			if (Date.now() - lastLocation.timestamp.getTime() < 5000) {
+			if (Date.now() - lastLocation.timestamp.getTime() < 1000) {
 				can_add = false;
-			}
-			const distance = getDistance(
-				{ latitude: lastLocation.latitude, longitude: lastLocation.longitude },
-				{ latitude: form.data.latitude, longitude: form.data.longitude }
-			);
-			if (distance < 10) {
-				await db
-					.update(locations)
-					.set({
-						timestamp: form.data.timestamp,
-						mode: form.data.mode
-					})
-					.where(eq(locations.id, lastLocation.id))
-					.execute();
-				can_add = false;
+				console.log('Too soon. can_add = false');
 			}
 		}
 

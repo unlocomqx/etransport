@@ -4,15 +4,17 @@
 	import { fromLonLat } from 'ol/proj';
 	import TileLayer from 'ol/layer/Tile';
 	import View from 'ol/View';
-	import { setContext } from 'svelte';
+	import { createEventDispatcher, setContext } from 'svelte';
 	import type { Coords } from '$lib/types';
 	import { OSM } from 'ol/source';
 
+	export let map: Map | null = null;
 	export let center: Coords = { latitude: 0, longitude: 0 };
 
 	const { latitude, longitude } = center;
 
-	let map: Map | null = null;
+	// dispatch event using svelte event dispatcher
+	const dispatch = createEventDispatcher();
 
 	setContext('map', {
 		get instance() {
@@ -46,6 +48,8 @@
 				target.style.cursor = hit ? 'pointer' : '';
 			}
 		});
+
+		dispatch('mapready', { map });
 
 		return {
 			destroy() {

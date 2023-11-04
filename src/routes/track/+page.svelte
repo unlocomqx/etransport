@@ -4,7 +4,7 @@
 	import { toast } from 'svelte-sonner';
 	import { page } from '$app/stores';
 	import type { Session } from '@supabase/supabase-js';
-	import { onDestroy, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 	import { mode } from '$lib/stores/mode';
 	import { setInteracted } from '$lib/stores/interacted';
 	import TransportMarker from '$lib/components/map/TransportMarker.svelte';
@@ -14,6 +14,8 @@
 	import type { GeoGroup } from '$lib/utils/geo';
 	import { fade } from 'svelte/transition';
 	import Loading from '$lib/components/Loading.svelte';
+	import { DEBUG } from '$lib/flags';
+	import { transform } from 'ol/proj';
 
 	let latitude: number;
 	let longitude: number;
@@ -23,6 +25,49 @@
 	let last_timestamp: number;
 	let state = 'idle';
 
+	const positionChanged = async (position: GeolocationPosition) => {
+		if (DEBUG) {
+			stopTracking();
+		}
+		state = 'tracking';
+		latitude = position.coords.latitude;
+		longitude = position.coords.longitude;
+		// console.log(position, position.coords.latitude, position.coords.longitude);
+		if (position.timestamp - last_timestamp < 5000 && !DEBUG) {
+			console.log('Skipping location update, too soon.');
+			return;
+		}
+		last_timestamp = position.timestamp;
+		const data = await fetch('/api/location', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				latitude: position.coords.latitude,
+				longitude: position.coords.longitude,
+				timestamp: new Date(position.timestamp).toUTCString(),
+				mode: $mode.value
+			})
+		}).then((res) => res.json());
+
+		if (data.error) {
+			console.log(data.errors);
+			toast.warning(data.message || 'The tracking data could not be saved.');
+		}
+		if (data.success) {
+			const url = new URL('/api/markers', window.location.origin);
+			url.searchParams.set('latitude', position.coords.latitude.toString());
+			url.searchParams.set('longitude', position.coords.longitude.toString());
+			const groups_data = await fetch(url, {
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			}).then((res) => res.json());
+			groups = groups_data.groups;
+		}
+	};
+
 	async function track() {
 		setInteracted();
 
@@ -30,52 +75,25 @@
 
 		if (perm.state === 'denied') {
 			toast.error('Geolocation for this site is disabled. Please enable it in your browser settings.');
-			goto('/');
+			await goto('/');
 			return;
+		}
+
+		if ('Notification' in window) {
+			const perm = await Notification.requestPermission();
+			if (perm === 'granted') {
+				const notification = new Notification('Hi there!');
+				notification.onclick = () => {
+					stopTracking();
+				};
+			}
 		}
 
 		state = 'loading';
 		last_timestamp = 0;
-		tracking_id = navigator.geolocation.watchPosition(
-			async (position) => {
-				state = 'tracking';
-				latitude = position.coords.latitude;
-				longitude = position.coords.longitude;
-				// console.log(position, position.coords.latitude, position.coords.longitude);
-				if (position.timestamp - last_timestamp < 5000) {
-					console.log('Skipping location update, too soon.');
-					return;
-				}
-				last_timestamp = position.timestamp;
-				const data = await fetch('/api/location', {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json'
-					},
-					body: JSON.stringify({
-						latitude: position.coords.latitude,
-						longitude: position.coords.longitude,
-						timestamp: new Date(position.timestamp).toUTCString(),
-						mode: $mode.value
-					})
-				}).then((res) => res.json());
 
-				if (data.error) {
-					console.log(data.errors);
-					toast.warning(data.message || 'The tracking data could not be saved.');
-				}
-				if (data.success) {
-					const url = new URL('/api/markers', window.location.origin);
-					url.searchParams.set('latitude', position.coords.latitude.toString());
-					url.searchParams.set('longitude', position.coords.longitude.toString());
-					const groups_data = await fetch(url, {
-						headers: {
-							'Content-Type': 'application/json'
-						}
-					}).then((res) => res.json());
-					groups = groups_data.groups;
-				}
-			},
+		tracking_id = navigator.geolocation.watchPosition(
+			positionChanged,
 			(err) => {
 				console.error(err);
 				toast.error('Location tracking failed.');
@@ -100,8 +118,6 @@
 			state = 'idle';
 		}
 	}
-
-	onDestroy(stopTracking);
 
 	let mode_state = 'idle';
 
@@ -141,11 +157,37 @@
 
 	onMount(() => {
 		track();
+		return () => stopTracking();
 	});
+
+	function handleMapReady(event: CustomEvent<{
+		map: Map
+	}>) {
+		const { map } = event.detail;
+		if (DEBUG) {
+			map.on('click', function(e) {
+				// get lat/lon of click
+				const { coordinate } = e;
+				const lonlat = transform(coordinate, 'EPSG:3857', 'EPSG:4326');
+				positionChanged({
+					coords: {
+						latitude: lonlat[1],
+						longitude: lonlat[0],
+						accuracy: 0,
+						altitude: 0,
+						altitudeAccuracy: 0,
+						heading: 0,
+						speed: 0
+					},
+					timestamp: Date.now()
+				});
+			});
+		}
+	}
 </script>
 
 {#if latitude && longitude}
-	<Map center={{latitude, longitude}}>
+	<Map center={{latitude, longitude}} on:mapready={handleMapReady}>
 		<CenterMarker coords={{latitude, longitude}} />
 		{#each groups as group (group.id)}
 			<TransportMarker {group} />

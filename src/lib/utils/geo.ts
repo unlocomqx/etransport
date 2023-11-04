@@ -1,6 +1,7 @@
 import { getDistance } from 'geolib';
 import type { LocationRow } from '$lib/schemas/db/schema';
 import type { Coords } from '$lib/types';
+import { GROUP_RADIUS, GROUP_TIMESPAN } from '$lib/flags';
 
 export type GeoGroup = Partial<LocationRow> & {
 	ids: string[];
@@ -85,7 +86,7 @@ export function getGeoGroups(
 			longitude,
 			timestamp,
 			reputation,
-			distance: getDistance([origin.latitude, origin.longitude], [latitude, longitude]),
+			distance: getDistance([ origin.latitude, origin.longitude ], [ latitude, longitude ]),
 			mode
 		})
 	);
@@ -95,7 +96,7 @@ export function getGeoGroups(
 	for (let index = 0; index < sorted.length; index++) {
 		const { id, id_user, latitude, longitude, timestamp, mode, reputation } = sorted[
 			index
-		] as Partial<UserLocation>;
+			] as Partial<UserLocation>;
 		if (!id || !id_user || !latitude || !longitude || !mode) continue;
 
 		const currentData = {
@@ -108,7 +109,7 @@ export function getGeoGroups(
 		};
 
 		if (index === lastIndex) {
-			grouped.set(id, [currentData]);
+			grouped.set(id, [ currentData ]);
 		} else {
 			const {
 				id: lastId,
@@ -118,12 +119,12 @@ export function getGeoGroups(
 			} = sorted[lastIndex] as Partial<LocationRow>;
 			if (!lastId || !lastLatitude || !lastLongitude) continue;
 
-			const distance = getDistance([lastLatitude, lastLongitude], [latitude, longitude]);
+			const distance = getDistance([ lastLatitude, lastLongitude ], [ latitude, longitude ]);
 			const time_diff = Math.abs(timestamp!.getTime() - lastTimestamp!.getTime()) / 1000;
-			if (distance < 50 && time_diff < 60) {
-				grouped.set(lastId!, [...grouped.get(lastId)!, currentData]);
+			if (distance < GROUP_RADIUS && time_diff < GROUP_TIMESPAN) {
+				grouped.set(lastId!, [ ...grouped.get(lastId)!, currentData ]);
 			} else {
-				grouped.set(id, [currentData]);
+				grouped.set(id, [ currentData ]);
 				lastIndex = index;
 			}
 		}
@@ -136,5 +137,5 @@ export function getGeoGroups(
 
 	return Array.from(grouped.entries())
 		.splice(0, groupsLimit)
-		.map(([id, locs]) => getGeoGroup(id, locs));
+		.map(([ id, locs ]) => getGeoGroup(id, locs));
 }
