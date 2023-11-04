@@ -44,14 +44,14 @@ export const POST: RequestHandler = async ({ request, locals: { session } }) => 
 		let can_add = true;
 
 		if (lastLocation) {
-			if (Date.now() - lastLocation.timestamp.getTime() < 10000) {
+			if (Date.now() - lastLocation.timestamp.getTime() < 5000) {
 				can_add = false;
 			}
 			const distance = getDistance(
 				{ latitude: lastLocation.latitude, longitude: lastLocation.longitude },
 				{ latitude: form.data.latitude, longitude: form.data.longitude }
 			);
-			if (distance < 100) {
+			if (distance < 10) {
 				await db
 					.update(locations)
 					.set({

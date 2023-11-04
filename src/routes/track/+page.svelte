@@ -42,7 +42,7 @@
 				latitude = position.coords.latitude;
 				longitude = position.coords.longitude;
 				// console.log(position, position.coords.latitude, position.coords.longitude);
-				if (position.timestamp - last_timestamp < 10000) {
+				if (position.timestamp - last_timestamp < 5000) {
 					console.log('Skipping location update, too soon.');
 					return;
 				}
