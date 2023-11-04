@@ -5,6 +5,7 @@ import { createInsertSchema } from 'drizzle-zod';
 import { locations } from '$lib/schemas/db/schema';
 import { db } from '$lib/db/client';
 import { and, desc, eq, notBetween, sql } from 'drizzle-orm';
+import { TRACKING_THRESHOLD } from '$lib/flags';
 
 export const POST: RequestHandler = async ({ request, locals: { session } }) => {
 	if (!session) {
@@ -43,7 +44,7 @@ export const POST: RequestHandler = async ({ request, locals: { session } }) => 
 		let can_add = true;
 
 		if (lastLocation) {
-			if (Date.now() - lastLocation.timestamp.getTime() < 1000) {
+			if (Date.now() - lastLocation.timestamp.getTime() < TRACKING_THRESHOLD) {
 				can_add = false;
 				console.log('Too soon. can_add = false');
 			}

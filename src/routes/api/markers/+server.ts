@@ -3,6 +3,7 @@ import { locations, users_reputation } from '$lib/schemas/db/schema';
 import { db } from '$lib/db/client';
 import { asc, between, desc, eq } from 'drizzle-orm';
 import { type GeoGroup, getGeoGroups, type UserLocation } from '$lib/utils/geo';
+import { MARKER_LIFESPAN } from '$lib/flags';
 
 export const GET: RequestHandler = async ({ url }) => {
 	const latitude_str = url.searchParams.get('latitude');
@@ -33,7 +34,7 @@ export const GET: RequestHandler = async ({ url }) => {
 			})
 			.from(locations)
 			.leftJoin(users_reputation, eq(locations.id_user, users_reputation.id_user))
-			.where(between(locations.timestamp, new Date(Date.now() - 1000 * 3600), new Date()))
+			.where(between(locations.timestamp, new Date(Date.now() - MARKER_LIFESPAN), new Date()))
 			.orderBy(asc(locations.id_user), desc(locations.timestamp))
 			.execute();
 		groups = getGeoGroups(recent_locations as UserLocation[], { latitude, longitude });
