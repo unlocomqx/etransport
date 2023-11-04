@@ -79,6 +79,7 @@
 			(err) => {
 				console.error(err);
 				toast.error('Location tracking failed.');
+				goto('/');
 				state = 'idle';
 			},
 			{
