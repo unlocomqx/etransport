@@ -113,6 +113,7 @@
 						body: 'Expand notification for more options.',
 						icon: '/favicon.png',
 						badge: '/favicon.png',
+						vibrate: [ 200 ],
 						actions: [
 							{
 								action: 'stopTracking',
