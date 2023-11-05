@@ -24,7 +24,6 @@
 	let tracking_id: number | null = null;
 	let last_timestamp: number;
 	let state = 'idle';
-	let notification: Notification | null = null;
 	let notification_timeout: number | null = null;
 
 	async function fetchMarkers(position: GeolocationPosition) {
