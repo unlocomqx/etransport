@@ -115,7 +115,8 @@
 						actions: [
 							{
 								action: 'stopTracking',
-								title: 'Stop tracking'
+								title: 'Stop tracking',
+								icon: '/icons/stop-filled.svg'
 							}
 						]
 					});
