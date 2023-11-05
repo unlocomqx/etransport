@@ -27,7 +27,7 @@
 		key;
 	}
 
-	let vectorLayer: VectorLayer | null = null;
+	let vectorLayer: VectorLayer<Vector> | null = null;
 	let iconStyle: Style | null = null;
 	let iconFeature: Feature | null = null;
 	let popup: Overlay | null = null;
@@ -100,7 +100,9 @@
 		map.on('click', handleClick);
 
 		return () => {
-			map.removeLayer(vectorLayer);
+			if (vectorLayer) {
+				map.removeLayer(vectorLayer);
+			}
 			if (popup) {
 				map.removeOverlay(popup);
 			}
