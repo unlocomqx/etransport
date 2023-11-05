@@ -1,0 +1,2 @@
+ALTER TABLE "locations" ADD COLUMN "create_date" timestamp with time zone DEFAULT now() NOT NULL;--> statement-breakpoint
+ALTER TABLE "locations" ADD COLUMN "update_date" timestamp with time zone DEFAULT now() NOT NULL;

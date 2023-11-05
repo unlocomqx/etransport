@@ -25,6 +25,18 @@
 	let last_timestamp: number;
 	let state = 'idle';
 
+	async function fetchMarkers(position: GeolocationPosition) {
+		const url = new URL('/api/markers', window.location.origin);
+		url.searchParams.set('latitude', position.coords.latitude.toString());
+		url.searchParams.set('longitude', position.coords.longitude.toString());
+		const groups_data = await fetch(url, {
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		}).then((res) => res.json());
+		groups = groups_data.groups;
+	}
+
 	const positionChanged = async (position: GeolocationPosition) => {
 		if (DEBUG) {
 			stopTracking();
@@ -56,15 +68,7 @@
 			toast.warning(data.message || 'The tracking data could not be saved.');
 		}
 		if (data.success) {
-			const url = new URL('/api/markers', window.location.origin);
-			url.searchParams.set('latitude', position.coords.latitude.toString());
-			url.searchParams.set('longitude', position.coords.longitude.toString());
-			const groups_data = await fetch(url, {
-				headers: {
-					'Content-Type': 'application/json'
-				}
-			}).then((res) => res.json());
-			groups = groups_data.groups;
+			await fetchMarkers(position);
 		}
 	};
 
@@ -152,6 +156,18 @@
 
 		if (data.success) {
 			toast.success('Mode updated successfully.');
+			await fetchMarkers({
+				coords: {
+					latitude,
+					longitude,
+					accuracy: 0,
+					altitude: 0,
+					altitudeAccuracy: 0,
+					heading: 0,
+					speed: 0
+				},
+				timestamp: Date.now()
+			});
 		}
 	}
 
@@ -189,7 +205,7 @@
 {#if latitude && longitude}
 	<Map center={{latitude, longitude}} on:mapready={handleMapReady}>
 		<CenterMarker coords={{latitude, longitude}} />
-		{#each groups as group (group.id)}
+		{#each groups as group (group.updated_at)}
 			<TransportMarker {group} />
 		{/each}
 	</Map>

@@ -2,7 +2,7 @@ import { pgEnum, pgTable, real, timestamp, varchar } from 'drizzle-orm/pg-core';
 import { nanoid } from 'nanoid';
 import { sql } from 'drizzle-orm';
 
-export const modeEnum = pgEnum('mode', ['', 'bus', 'train']);
+export const modeEnum = pgEnum('mode', [ '', 'bus', 'train' ]);
 
 export const locations = pgTable('locations', {
 	id: varchar('id').primaryKey().$defaultFn(nanoid),
@@ -10,7 +10,14 @@ export const locations = pgTable('locations', {
 	latitude: real('latitude').notNull(),
 	longitude: real('longitude').notNull(),
 	timestamp: timestamp('timestamp', { withTimezone: true }).notNull(),
-	mode: modeEnum('mode').notNull()
+	mode: modeEnum('mode').notNull(),
+
+	created_at: timestamp('create_date', { withTimezone: true })
+		.notNull()
+		.default(sql`now()`),
+	updated_at: timestamp('update_date', { withTimezone: true })
+		.notNull()
+		.default(sql`now()`)
 });
 
 export type LocationRow = typeof locations.$inferSelect;

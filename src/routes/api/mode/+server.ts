@@ -44,7 +44,8 @@ export const POST: RequestHandler = async ({ request, locals: { session } }) => 
 			await db
 				.update(locations)
 				.set({
-					mode: form.data.mode
+					mode: form.data.mode,
+					updated_at: new Date()
 				})
 				.where(eq(locations.id, lastLocation.id))
 				.execute();
