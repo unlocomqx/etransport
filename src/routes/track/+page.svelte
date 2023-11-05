@@ -15,6 +15,7 @@
 	import Loading from '$lib/components/Loading.svelte';
 	import { DEBUG } from '$lib/flags';
 	import { transform } from 'ol/proj';
+	import CenterMarker from '$lib/components/map/CenterMarker.svelte';
 
 	let latitude: number;
 	let longitude: number;
@@ -203,8 +204,8 @@
 
 {#if latitude && longitude}
 	<Map center={{latitude, longitude}} on:mapready={handleMapReady}>
-		<!--<CenterMarker coords={{latitude, longitude}} />-->
-		{#each groups as group (group.updated_at)}
+		<CenterMarker coords={{latitude, longitude}} />
+		{#each groups as group (group.id)}
 			<TransportMarker {group} />
 		{/each}
 	</Map>
