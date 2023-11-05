@@ -44,8 +44,6 @@
 			source: vectorSource
 		});
 
-		vectorLayer.setZIndex(1);
-
 		map.addLayer(vectorLayer);
 
 		return () => {

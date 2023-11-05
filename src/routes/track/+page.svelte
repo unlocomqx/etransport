@@ -13,7 +13,7 @@
 	import type { GeoGroup } from '$lib/utils/geo';
 	import { fade } from 'svelte/transition';
 	import Loading from '$lib/components/Loading.svelte';
-	import { DEBUG } from '$lib/flags';
+	import { DEBUG, TRACKING_NOTIFICATION_DELAY } from '$lib/flags';
 	import { transform } from 'ol/proj';
 	import CenterMarker from '$lib/components/map/CenterMarker.svelte';
 
@@ -21,9 +21,11 @@
 	let longitude: number;
 	let groups: GeoGroup[] = [];
 
-	let tracking_id: number;
+	let tracking_id: number | null = null;
 	let last_timestamp: number;
 	let state = 'idle';
+	let notification: Notification | null = null;
+	let notification_timeout: number | null = null;
 
 	async function fetchMarkers(position: GeolocationPosition) {
 		const url = new URL('/api/markers', window.location.origin);
@@ -42,6 +44,7 @@
 			stopTracking();
 		}
 		state = 'tracking';
+		notification_timeout = window.setTimeout(notify, TRACKING_NOTIFICATION_DELAY);
 		latitude = position.coords.latitude;
 		longitude = position.coords.longitude;
 		// console.log(position, position.coords.latitude, position.coords.longitude);
@@ -83,22 +86,13 @@
 			return;
 		}
 
-		if ('Notification' in window) {
-			const perm = await Notification.requestPermission();
-			if (perm === 'granted') {
-				const notification = new Notification('Hi there!');
-				notification.onclick = () => {
-					stopTracking();
-				};
-			}
-		}
-
 		state = 'loading';
 		last_timestamp = 0;
 
 		tracking_id = navigator.geolocation.watchPosition(
 			positionChanged,
 			(err) => {
+				if (notification_timeout) clearTimeout(notification_timeout);
 				console.error(err);
 				toast.error('Location tracking failed.');
 				goto('/');
@@ -111,11 +105,38 @@
 		);
 	}
 
+	async function notify() {
+		if ('Notification' in window) {
+			const perm = await Notification.requestPermission();
+			if (perm === 'granted') {
+				navigator.serviceWorker.ready.then((registration) => {
+					registration.showNotification('eTransport is tracking your location', {
+						body: 'Click here to stop tracking.',
+						icon: '/favicon.png',
+						actions: [
+							{
+								action: 'stopTracking',
+								title: 'Stop tracking'
+							}
+						]
+					});
+					// listen to message notificationClicked
+					navigator.serviceWorker.addEventListener('message', (event) => {
+						if (event.data?.type === 'notificationclick' &&
+							event.data?.action === 'stopTracking') {
+							stopTracking();
+						}
+					});
+				});
+			}
+		}
+	}
+
 	export function stopTracking() {
 		try {
-			if (tracking_id) {
-				navigator.geolocation.clearWatch(tracking_id);
-			}
+			if (notification_timeout) clearTimeout(notification_timeout);
+			if (tracking_id) navigator.geolocation.clearWatch(tracking_id);
+			tracking_id = null;
 		} catch (e) {
 			console.log(e);
 		} finally {

@@ -76,3 +76,16 @@ self.addEventListener('fetch', (event) => {
 
 	event.respondWith(respond());
 });
+
+self.addEventListener('notificationclick', (event) => {
+	event.waitUntil(
+		self.clients.matchAll().then((clientList) => {
+			clientList.forEach((client) => {
+				client.postMessage({
+					type: 'notificationclick',
+					action: event.action
+				});
+			});
+		})
+	);
+});
