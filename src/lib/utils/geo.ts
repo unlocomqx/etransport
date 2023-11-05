@@ -20,9 +20,10 @@ export function getGeoGroup(id: string, locations: Partial<UserLocation>[]): Geo
 	let y = 0;
 	let z = 0;
 	const modes: string[] = [];
+	const headings: number[] = [];
 	let total_reputation = 0;
 
-	for (const { latitude, longitude, mode, reputation } of locations) {
+	for (const { latitude, longitude, heading, mode, reputation } of locations) {
 		if (!latitude || !longitude || !mode) continue;
 
 		const lat = (latitude * Math.PI) / 180;
@@ -32,6 +33,7 @@ export function getGeoGroup(id: string, locations: Partial<UserLocation>[]): Geo
 		y += Math.cos(lat) * Math.sin(lon);
 		z += Math.sin(lat);
 		modes.push(mode);
+		if (heading) headings.push(heading);
 
 		const user_reputation = reputation || 0;
 		if (user_reputation > 0) {
@@ -67,6 +69,7 @@ export function getGeoGroup(id: string, locations: Partial<UserLocation>[]): Geo
 		ids: locations.map((loc) => loc.id).map((id) => id!),
 		latitude: lat,
 		longitude: lng,
+		heading: headings.reduce((acc, cur) => acc + cur, 0) / headings.length,
 		mode: mostUsedMode,
 		count: coordLength,
 		total_reputation
@@ -79,11 +82,12 @@ export function getGeoGroups(
 	limit: number | undefined = undefined
 ): GeoGroup[] {
 	const distances = locations.map(
-		({ id, id_user, latitude, longitude, timestamp, mode, reputation }) => ({
+		({ id, id_user, latitude, longitude, heading, timestamp, mode, reputation }) => ({
 			id,
 			id_user,
 			latitude,
 			longitude,
+			heading,
 			timestamp,
 			reputation,
 			distance: getDistance([ origin.latitude, origin.longitude ], [ latitude, longitude ]),
@@ -94,7 +98,7 @@ export function getGeoGroups(
 	const grouped = new Map<string, Partial<UserLocation>[]>();
 	let lastIndex = 0;
 	for (let index = 0; index < sorted.length; index++) {
-		const { id, id_user, latitude, longitude, timestamp, mode, reputation } = sorted[
+		const { id, id_user, latitude, longitude, heading, timestamp, mode, reputation } = sorted[
 			index
 			] as Partial<UserLocation>;
 		if (!id || !id_user || !latitude || !longitude || !mode) continue;
@@ -104,6 +108,7 @@ export function getGeoGroups(
 			id_user,
 			latitude,
 			longitude,
+			heading,
 			mode,
 			reputation
 		};

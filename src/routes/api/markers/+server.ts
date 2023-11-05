@@ -28,6 +28,7 @@ export const GET: RequestHandler = async ({ url }) => {
 				id_user: locations.id_user,
 				latitude: locations.latitude,
 				longitude: locations.longitude,
+				heading: locations.heading,
 				timestamp: locations.timestamp,
 				mode: locations.mode,
 				reputation: users_reputation.reputation

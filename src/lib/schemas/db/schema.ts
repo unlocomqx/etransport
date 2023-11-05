@@ -9,6 +9,7 @@ export const locations = pgTable('locations', {
 	id_user: varchar('id_user').notNull(),
 	latitude: real('latitude').notNull(),
 	longitude: real('longitude').notNull(),
+	heading: real('heading'),
 	timestamp: timestamp('timestamp', { withTimezone: true }).notNull(),
 	mode: modeEnum('mode').notNull(),
 

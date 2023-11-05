@@ -19,7 +19,7 @@
 	let display_popover = false;
 
 	$: ({ latitude, longitude } = group);
-	$: icon = group.mode === 'train' ? '/map/train.png' : '/map/bus.png';
+	$: icon = group.mode === 'train' ? '/map/oncoming-train.png' : '/map/oncoming-bus.png';
 
 	$: key = `${group.id}-${latitude}-${longitude}-${icon}-${group.count}-${group.total_reputation}`;
 	$: {

@@ -5,7 +5,8 @@ import { createInsertSchema } from 'drizzle-zod';
 import { locations } from '$lib/schemas/db/schema';
 import { db } from '$lib/db/client';
 import { and, desc, eq, notBetween, sql } from 'drizzle-orm';
-import { TRACKING_THRESHOLD } from '$lib/flags';
+import { HEADING_LIFESPAN, TRACKING_THRESHOLD } from '$lib/flags';
+import { getRhumbLineBearing } from 'geolib';
 
 export const POST: RequestHandler = async ({ request, locals: { session } }) => {
 	if (!session) {
@@ -42,11 +43,20 @@ export const POST: RequestHandler = async ({ request, locals: { session } }) => 
 			.then((r) => r[0]);
 
 		let can_add = true;
+		let heading = null;
 
 		if (lastLocation) {
-			if (Date.now() - lastLocation.timestamp.getTime() < TRACKING_THRESHOLD) {
+			const time_diff = Date.now() - lastLocation.timestamp.getTime();
+			if (time_diff < TRACKING_THRESHOLD) {
 				can_add = false;
-				console.log('Too soon. can_add = false');
+			}
+
+			if (time_diff < HEADING_LIFESPAN) {
+				const bearing = getRhumbLineBearing(
+					[ lastLocation.longitude, lastLocation.latitude ],
+					[ form.data.longitude, form.data.latitude ]
+				);
+				heading = parseInt(bearing.toFixed(0));
 			}
 		}
 
@@ -58,7 +68,8 @@ export const POST: RequestHandler = async ({ request, locals: { session } }) => 
 					latitude: form.data.latitude,
 					longitude: form.data.longitude,
 					timestamp: form.data.timestamp,
-					mode: form.data.mode
+					mode: form.data.mode,
+					heading
 				})
 				.returning();
 			if (!inserted) {
