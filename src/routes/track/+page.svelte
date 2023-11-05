@@ -112,6 +112,7 @@
 					registration.showNotification('eTransport is tracking your location', {
 						body: 'Expand notification for more options.',
 						icon: '/favicon.png',
+						badge: '/favicon.png',
 						actions: [
 							{
 								action: 'stopTracking',
