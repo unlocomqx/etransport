@@ -28,7 +28,7 @@
 	}
 
 	let vectorLayer: VectorLayer<Vector> | null = null;
-	let iconStyle: Style | null = null;
+	let iconStyle: Style[] | null = null;
 	let iconFeature: Feature | null = null;
 	let popup: Overlay | null = null;
 
@@ -111,28 +111,49 @@
 	});
 
 	function getStyle() {
-		return new Style({
-			image: new olIcon({
-				anchor: [ 0.5, .85 ],
-				anchorXUnits: 'fraction',
-				anchorYUnits: 'fraction',
-				src: icon,
-				scale: .5
-			}),
-			text: new Text({
-				text: group.count.toString(),
-				offsetY: -6,
-				font: 'bold 16px sans-serif',
-				justify: 'center',
-				fill: new Fill({
-					color: 'red'
+		const styles = [
+			new Style({
+				image: new olIcon({
+					anchor: [ 0.5, .85 ],
+					anchorXUnits: 'fraction',
+					anchorYUnits: 'fraction',
+					src: icon,
+					scale: .5
 				}),
-				stroke: new Stroke({
-					color: 'white',
-					width: 5
+				text: new Text({
+					text: group.count.toString(),
+					offsetY: -6,
+					font: 'bold 16px sans-serif',
+					justify: 'center',
+					fill: new Fill({
+						color: 'red'
+					}),
+					stroke: new Stroke({
+						color: 'white',
+						width: 5
+					})
 				})
 			})
-		});
+		];
+
+		if (group.heading !== undefined && group.heading !== null) {
+			let anchor_y = 1.2;
+			if (group.heading < 60 || group.heading > 300) {
+				anchor_y = 2;
+			}
+			styles.push(new Style({
+				image: new olIcon({
+					anchor: [ 0.5, anchor_y ],
+					anchorXUnits: 'fraction',
+					anchorYUnits: 'fraction',
+					src: '/map/arrow-up-fill.png',
+					scale: .4,
+					rotation: group.heading / 180 * Math.PI
+				})
+			}));
+		}
+
+		return styles;
 	}
 
 	function getOpacity() {

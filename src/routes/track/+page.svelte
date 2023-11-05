@@ -8,7 +8,6 @@
 	import { mode } from '$lib/stores/mode';
 	import { setInteracted } from '$lib/stores/interacted';
 	import TransportMarker from '$lib/components/map/TransportMarker.svelte';
-	import CenterMarker from '$lib/components/map/CenterMarker.svelte';
 	import Map from '$lib/components/map/Map.svelte';
 	import { goto } from '$app/navigation';
 	import type { GeoGroup } from '$lib/utils/geo';
@@ -204,7 +203,7 @@
 
 {#if latitude && longitude}
 	<Map center={{latitude, longitude}} on:mapready={handleMapReady}>
-		<CenterMarker coords={{latitude, longitude}} />
+		<!--<CenterMarker coords={{latitude, longitude}} />-->
 		{#each groups as group (group.updated_at)}
 			<TransportMarker {group} />
 		{/each}
