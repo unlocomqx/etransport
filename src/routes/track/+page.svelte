@@ -217,7 +217,7 @@
 		<span class='flex-1'></span>
 		<div class='join'>
 			<div class='join'>
-				<button class='relative btn btn-outline join-item'
+				<button class='relative btn join-item'
 								class:btn-success={$mode.value === "bus"}
 								class:btn-active={$mode.value === "bus"}
 								disabled={mode_state === 'loading'}
@@ -228,7 +228,7 @@
 						<Loading />
 					{/if}
 				</button>
-				<button class='relative btn btn-outline join-item'
+				<button class='relative btn join-item'
 								class:btn-success={$mode.value === "train"}
 								class:btn-active={$mode.value === "train"}
 								disabled={mode_state === 'loading'}
