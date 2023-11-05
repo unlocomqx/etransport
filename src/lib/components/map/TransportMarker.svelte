@@ -15,8 +15,6 @@
 
 	export let group: GeoGroup;
 
-	$: console.log(group);
-
 	let popover: HTMLDivElement;
 	let display_popover = false;
 
