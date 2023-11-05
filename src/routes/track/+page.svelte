@@ -110,7 +110,7 @@
 			if (perm === 'granted') {
 				navigator.serviceWorker.ready.then((registration) => {
 					registration.showNotification('eTransport is tracking your location', {
-						body: 'Click here to stop tracking.',
+						body: 'Expand notification for more options.',
 						icon: '/favicon.png',
 						actions: [
 							{
