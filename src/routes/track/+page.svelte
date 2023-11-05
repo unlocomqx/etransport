@@ -124,6 +124,11 @@
 						if (event.data?.type === 'notificationclick' &&
 							event.data?.action === 'stopTracking') {
 							stopTracking();
+							registration.getNotifications().then((notifications) => {
+								notifications.forEach((notification) => {
+									notification.close();
+								});
+							});
 						}
 					});
 				});
