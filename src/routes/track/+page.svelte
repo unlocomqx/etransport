@@ -47,7 +47,9 @@
 			stopTracking();
 		}
 		state = 'tracking';
-		notification_timeout = window.setTimeout(notify, TRACKING_NOTIFICATION_DELAY);
+		if (!notification_timeout) {
+			notification_timeout = window.setTimeout(notify, TRACKING_NOTIFICATION_DELAY);
+		}
 		latitude = position.coords.latitude;
 		longitude = position.coords.longitude;
 		if (mapComp) {
@@ -80,8 +82,8 @@
 			await fetchMarkers(position);
 			if (data.idle) {
 				toast.info('You have been idle for a while. Tracking has been stopped.');
-				notifyIdle();
 				stopTracking();
+				await notifyIdle();
 			}
 		}
 	};
