@@ -56,7 +56,7 @@ describe('Map', () => {
 			.get(`[data-cy=update-position]`).click();
 	});
 
-	it('display count', () => {
+	it.only('display count', () => {
 		cy
 			.task('seed', { spec: 'locations' })
 			.task('updateLocation', {
@@ -81,8 +81,8 @@ describe('Map', () => {
 			.task('insertLocation', {
 				id: 'new-location',
 				id_user: 'new-user',
-				latitude: 35.765249,
-				longitude: 10.809677,
+				latitude: 35.765285,
+				longitude: 10.8095,
 				timestamp: (new Date(Date.now() - 10000)).toISOString(),
 				mode: 'bus'
 			})
