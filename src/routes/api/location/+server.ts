@@ -5,7 +5,13 @@ import { createInsertSchema } from 'drizzle-zod';
 import { locations } from '$lib/schemas/db/schema';
 import { db } from '$lib/db/client';
 import { and, between, desc, eq, notBetween, sql } from 'drizzle-orm';
-import { HEADING_LIFESPAN, TRACKING_IDLE_DELAY, TRACKING_IDLE_RADIUS, TRACKING_THRESHOLD } from '$lib/flags';
+import {
+	HEADING_LIFESPAN,
+	TRACKING_IDLE_DELAY,
+	TRACKING_IDLE_MIN_TIME,
+	TRACKING_IDLE_RADIUS,
+	TRACKING_THRESHOLD
+} from '$lib/flags';
 import { getPathLength, getRhumbLineBearing } from 'geolib';
 
 export const POST: RequestHandler = async ({ request, locals: { session } }) => {
@@ -88,7 +94,7 @@ export const POST: RequestHandler = async ({ request, locals: { session } }) => 
 				.where(
 					and(
 						eq(locations.id_user, form.data.id_user),
-						between(locations.timestamp, new Date(Date.now() - (TRACKING_IDLE_DELAY + 60 * 1000)), new Date())
+						between(locations.timestamp, new Date(Date.now() - (TRACKING_IDLE_DELAY)), new Date())
 					)
 				)
 				.orderBy(locations.timestamp);
@@ -100,8 +106,8 @@ export const POST: RequestHandler = async ({ request, locals: { session } }) => 
 				const first = recent_locations[0];
 				const last = recent_locations[recent_locations.length - 1];
 				const time_diff = last.timestamp.getTime() - first.timestamp.getTime();
-				console.log({ time_diff, pathLength });
-				if (time_diff > TRACKING_IDLE_DELAY && pathLength < TRACKING_IDLE_RADIUS) {
+				console.log({ time_diff, pathLength, TRACKING_IDLE_MIN_TIME });
+				if (time_diff > TRACKING_IDLE_MIN_TIME && pathLength < TRACKING_IDLE_RADIUS) {
 					idle = true;
 				}
 			}

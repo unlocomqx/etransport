@@ -301,10 +301,10 @@
 						<span>Stop</span>
 					</a>
 				{:else}
-					<a data-cy-state={state} class='btn btn-success join-item' href='/'>
+					<button on:click={track} data-cy-state={state} class='btn btn-success join-item'>
 						<Icon icon='ion:location' class='text-2xl' />
 						<span>Start</span>
-					</a>
+					</button>
 				{/if}
 			</div>
 		</div>
