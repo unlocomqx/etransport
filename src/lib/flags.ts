@@ -1,8 +1,6 @@
 import { env } from '$env/dynamic/public';
 
-console.log(env.PUBLIC_DEBUG);
 export const DEBUG = env.PUBLIC_DEBUG === 'true';
-console.log(DEBUG);
 export const GROUP_RADIUS = 20;
 export const GROUP_TIMESPAN = 30;
 export const TRACKING_THRESHOLD = 1000;

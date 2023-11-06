@@ -65,6 +65,6 @@
 	}
 </script>
 
-<div class='map fixed w-full h-full' use:initMap>
+<div class='map fixed w-full h-full' data-cy='map' use:initMap>
 	<slot></slot>
 </div>

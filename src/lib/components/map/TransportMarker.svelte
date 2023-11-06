@@ -202,6 +202,7 @@
 		 data-cy-count='{group.count}'
 		 data-cy-id='{group.id}'
 		 data-cy-mode='{group.mode}'
+		 data-heading='{group.heading}'
 ></div>
 
 <div bind:this={popover}
