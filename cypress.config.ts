@@ -54,7 +54,8 @@ export default defineConfig({
 				]
 			},
 			browserPermissions: {
-				geolocation: 'allow'
+				geolocation: 'allow',
+				notifications: 'allow'
 			}
 		}
 	}

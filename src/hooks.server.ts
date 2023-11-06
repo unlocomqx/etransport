@@ -24,8 +24,6 @@ export const handle: Handle = async ({ event, resolve }) => {
 		}
 	}
 
-	console.log(session);
-
 	event.locals.session = session;
 	event.locals.user = session?.user;
 
