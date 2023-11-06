@@ -9,9 +9,22 @@ export const handle: Handle = async ({ event, resolve }) => {
 		event
 	});
 
-	const {
+	let {
 		data: { session }
 	} = await event.locals.supabase.auth.getSession();
+
+	if (process.env.TEST) {
+		if (!session) {
+			session = {
+				// @ts-ignore
+				user: {
+					id: 'new-user'
+				}
+			};
+		}
+	}
+
+	console.log(session);
 
 	event.locals.session = session;
 	event.locals.user = session?.user;

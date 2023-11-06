@@ -4,7 +4,7 @@
 	import { toast } from 'svelte-sonner';
 	import { page } from '$app/stores';
 	import type { Session } from '@supabase/supabase-js';
-	import { onMount } from 'svelte';
+	import { onMount, SvelteComponent } from 'svelte';
 	import { mode } from '$lib/stores/mode';
 	import { setInteracted } from '$lib/stores/interacted';
 	import TransportMarker from '$lib/components/map/TransportMarker.svelte';
@@ -17,6 +17,7 @@
 	import { transform } from 'ol/proj';
 	import CenterMarker from '$lib/components/map/CenterMarker.svelte';
 
+	let mapComp: SvelteComponent;
 	let latitude: number;
 	let longitude: number;
 	let groups: GeoGroup[] = [];
@@ -46,6 +47,9 @@
 		notification_timeout = window.setTimeout(notify, TRACKING_NOTIFICATION_DELAY);
 		latitude = position.coords.latitude;
 		longitude = position.coords.longitude;
+		if (mapComp) {
+			mapComp.centerMap({ latitude, longitude });
+		}
 		// console.log(position, position.coords.latitude, position.coords.longitude);
 		if (position.timestamp - last_timestamp < 5000 && !DEBUG) {
 			console.log('Skipping location update, too soon.');
@@ -230,7 +234,7 @@
 </script>
 
 {#if latitude && longitude}
-	<Map center={{latitude, longitude}} on:mapready={handleMapReady}>
+	<Map bind:this={mapComp} center={{latitude, longitude}} on:mapready={handleMapReady}>
 		<CenterMarker coords={{latitude, longitude}} />
 		{#each groups as group (group.id)}
 			<TransportMarker {group} />

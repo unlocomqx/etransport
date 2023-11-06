@@ -10,6 +10,11 @@
 
 	export let map: Map | null = null;
 	export let center: Coords = { latitude: 0, longitude: 0 };
+	export const centerMap = (center: Coords) => {
+		if (!map) return;
+		const point = new Point(fromLonLat([ center.longitude, center.latitude ]));
+		map.getView().setCenter(point.getCoordinates());
+	};
 
 	const { latitude, longitude } = center;
 
