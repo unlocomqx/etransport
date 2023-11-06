@@ -295,10 +295,17 @@
 						<Loading />
 					{/if}
 				</button>
-				<a data-cy-state={state} class='btn btn-error join-item' href='/'>
-					<Icon icon='mdi:stop' class='text-2xl' />
-					<span>Stop</span>
-				</a>
+				{#if state === 'tracking'}
+					<a data-cy-state={state} class='btn btn-error join-item' href='/'>
+						<Icon icon='mdi:stop' class='text-2xl' />
+						<span>Stop</span>
+					</a>
+				{:else}
+					<a data-cy-state={state} class='btn btn-success join-item' href='/'>
+						<Icon icon='ion:location' class='text-2xl' />
+						<span>Start</span>
+					</a>
+				{/if}
 			</div>
 		</div>
 	</div>
