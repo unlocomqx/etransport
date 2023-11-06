@@ -78,6 +78,11 @@
 		}
 		if (data.success) {
 			await fetchMarkers(position);
+			if (data.idle) {
+				toast.info('You have been idle for a while. Tracking has been stopped.');
+				notifyIdle();
+				stopTracking();
+			}
 		}
 	};
 
@@ -145,8 +150,23 @@
 		}
 	}
 
+	async function notifyIdle() {
+		try {
+			navigator.serviceWorker.ready.then((registration) => {
+				registration.showNotification('eTransport location tracking stopped', {
+					body: 'You have been idle for a while. Tracking has been stopped.',
+					icon: '/favicon.png',
+					vibrate: [ 200 ]
+				});
+			});
+		} catch (e) {
+			console.log(e);
+		}
+	}
+
 	export function stopTracking() {
 		try {
+			state = 'idle';
 			if (notification_timeout) clearTimeout(notification_timeout);
 			if (tracking_id) navigator.geolocation.clearWatch(tracking_id);
 			tracking_id = null;
@@ -273,7 +293,7 @@
 						<Loading />
 					{/if}
 				</button>
-				<a class='btn btn-error join-item' href='/'>
+				<a data-cy-state={state} class='btn btn-error join-item' href='/'>
 					<Icon icon='mdi:stop' class='text-2xl' />
 					<span>Stop</span>
 				</a>
