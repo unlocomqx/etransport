@@ -16,8 +16,11 @@
 	import { DEBUG, TRACKING_NOTIFICATION_DELAY } from '$lib/flags';
 	import { transform } from 'ol/proj';
 	import CenterMarker from '$lib/components/map/CenterMarker.svelte';
+	import type { Coords } from '$lib/types';
 
-	let mapComp: SvelteComponent;
+	let mapComp: SvelteComponent & {
+		centerMap: (coords: Coords) => void
+	};
 	let latitude: number;
 	let longitude: number;
 	let groups: GeoGroup[] = [];
