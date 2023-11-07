@@ -32,7 +32,7 @@ describe('Tracker', () => {
 			.get(`[data-cy=transport-marker][data-heading=90]`).should('have.length', 1);
 	});
 
-	it.only('stop tracking if idle', () => {
+	it('stop tracking if idle', () => {
 		cy
 			.task('seedLocations', { count: 20, radius: 1 })
 			.load('/track', {
