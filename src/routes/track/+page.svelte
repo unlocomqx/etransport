@@ -13,7 +13,7 @@
 	import type { GeoGroup } from '$lib/utils/geo';
 	import { fade } from 'svelte/transition';
 	import Loading from '$lib/components/Loading.svelte';
-	import { DEBUG, TRACKING_NOTIFICATION_DELAY } from '$lib/flags';
+	import { DEBUG, TRACKING_IDLE_CHECK_INTERVAL, TRACKING_NOTIFICATION_DELAY } from '$lib/flags';
 	import { transform } from 'ol/proj';
 	import CenterMarker from '$lib/components/map/CenterMarker.svelte';
 	import type { Coords } from '$lib/types';
@@ -46,7 +46,6 @@
 		if (DEBUG) {
 			stopTracking();
 		}
-		state = 'tracking';
 		if (!notification_timeout) {
 			notification_timeout = window.setTimeout(notify, TRACKING_NOTIFICATION_DELAY);
 		}
@@ -79,12 +78,8 @@
 			toast.warning(data.message || 'The tracking data could not be saved.');
 		}
 		if (data.success) {
+			state = 'tracking';
 			await fetchMarkers(position);
-			if (data.idle) {
-				toast.info('You have been idle for a while. Tracking has been stopped.');
-				stopTracking();
-				await notifyIdle();
-			}
 		}
 	};
 
@@ -255,6 +250,40 @@
 				});
 			});
 		}
+	}
+
+	onMount(() => {
+		const intv = setInterval(checkIdle, TRACKING_IDLE_CHECK_INTERVAL);
+		return () => clearInterval(intv);
+	});
+
+	$: console.log(state);
+
+	async function checkIdle() {
+		if (state === 'tracking') {
+			const data = await fetch('/api/idle', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					mode: $mode.value
+				})
+			}).then((res) => res.json());
+
+			if (data.error) {
+				console.log(data.errors);
+				toast.warning(data.message || 'The tracking data could not be saved.');
+			}
+			if (data.success) {
+				if (data.idle) {
+					toast.info('You have been idle for a while. Tracking has been stopped.');
+					stopTracking();
+					await notifyIdle();
+				}
+			}
+		}
+
 	}
 </script>
 
