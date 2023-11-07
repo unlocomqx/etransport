@@ -56,7 +56,7 @@ describe('Map', () => {
 			.get(`[data-cy=update-position]`).click();
 	});
 
-	it.only('display count', () => {
+	it('display count', () => {
 		cy
 			.task('seed', { spec: 'locations' })
 			.task('updateLocation', {
